@@ -19,8 +19,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDirection;
     private Vector3 movement;
     private float activeMoveSpeed;
-
-
+    private float velocity;
 
     // Start is called before the first frame update
     void Start()
@@ -36,8 +35,6 @@ public class PlayerController : MonoBehaviour
         HandlePlayerLookMovement();
 
         HandlePlayerMovement();
-
-
 
     }
 
@@ -66,10 +63,19 @@ public class PlayerController : MonoBehaviour
             activeMoveSpeed = movementSpeed;
         }
 
-        
+        velocity = movement.y;
+
         // based on players camera direction, then remove the sideways speed increase
         movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized * activeMoveSpeed; // added here to prevent jumping sped up
+       
+        if (!characterController.isGrounded)
+        {
+            // set velocity when NOT on ground
+            movement.y = velocity;
+        }
 
+        movement.y += Physics.gravity.y * Time.deltaTime; // apply gravity
+    
         characterController.Move(movement * Time.deltaTime);
     }
 
