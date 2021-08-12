@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 8f;
     public CharacterController characterController;
 
+    private Camera camera;
     private float verticalRotation;
     private Vector2 mouseInput;
     private Vector3 moveDirection;
@@ -25,6 +26,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        camera = Camera.main;
     }
 
     // Update is called once per frame
@@ -36,6 +39,18 @@ public class PlayerController : MonoBehaviour
 
 
 
+    }
+
+    // Happens after Update
+    private void LateUpdate()
+    {
+        HandleCameraPostion();
+    }
+
+    private void HandleCameraPostion()
+    {
+        camera.transform.position = viewPoint.position;
+        camera.transform.rotation = viewPoint.rotation;
     }
 
     private void HandlePlayerMovement()
