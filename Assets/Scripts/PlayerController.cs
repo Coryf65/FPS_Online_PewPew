@@ -10,11 +10,14 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 1f;
     public bool IsInverted = false;
     public float movementSpeed = 5f;
+    public float runSpeed = 8f;
+    public CharacterController characterController;
 
     private float verticalRotation;
     private Vector2 mouseInput;
     private Vector3 moveDirection;
     private Vector3 movement;
+    private float activeMoveSpeed;
 
 
 
@@ -39,10 +42,20 @@ public class PlayerController : MonoBehaviour
     {
         moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
 
-        // based on players camera direction, then remove the sideways speed increase
-        movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized;
+        // 
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            activeMoveSpeed = runSpeed;
+        } else
+        {
+            activeMoveSpeed = movementSpeed;
+        }
 
-        transform.position += movementSpeed * Time.deltaTime * movement;
+        
+        // based on players camera direction, then remove the sideways speed increase
+        movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized * activeMoveSpeed; // added here to prevent jumping sped up
+
+        characterController.Move(movement * Time.deltaTime);
     }
 
     private void HandlePlayerLookMovement()
