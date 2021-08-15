@@ -16,12 +16,11 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckPoint;
     public LayerMask groundLayers;
     public GameObject bulletImpactEffect;
-    public float timeBetweenShots = .1f;
     public float shotCounter;
     public float maxHeatValue = 10f;
-    public float heatPerShot = 1f;
     public float cooldownRate = 4f;
     public float overHeatCooldown = 5f;
+    public Weapon[] weapons;
 
     private Camera camera;
     private float verticalRotation;
@@ -32,6 +31,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private float heatCounter;
     private bool isOverheated;
+    private int selectedWeapon;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +42,9 @@ public class PlayerController : MonoBehaviour
         camera = Camera.main;
 
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
+
+        // Temp pick a weapon
+        HandleWeaponSwitch();
     }
 
     // Update is called once per frame
@@ -49,7 +52,10 @@ public class PlayerController : MonoBehaviour
     {
         HandlePlayerLookMovement();
         HandlePlayerMovement();
-    }
+        HandleMouseCursor();
+        HandleWeaponActions();
+        HandleWeaponSwitch();
+    }    
 
     // Happens after Update
     private void LateUpdate()
@@ -99,8 +105,36 @@ public class PlayerController : MonoBehaviour
 
         movement.y += Physics.gravity.y * Time.deltaTime * gravityModifier; // apply gravity
     
-        characterController.Move(movement * Time.deltaTime);
+        characterController.Move(movement * Time.deltaTime);                     
+    }
 
+    /// <summary>
+    /// Handles Mouse Cursor clicking in and out of game window
+    /// </summary>
+    private void HandleMouseCursor()
+    {
+        // Mouse Cursor Logic
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else if (Cursor.lockState == CursorLockMode.None)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                // player clicked on the window
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+    }
+
+    /// <summary>
+    ///  Handles Weapons Main Fire
+    /// </summary>
+    private void HandleWeaponActions()
+    {
         if (!isOverheated)
         {
             // Shooting
@@ -110,7 +144,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // full auto shooting
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) && weapons[selectedWeapon].isFullAuto)
             {
                 shotCounter -= Time.deltaTime; // count down
                 if (shotCounter <= 0)
@@ -119,7 +153,8 @@ public class PlayerController : MonoBehaviour
                 }
             }
             heatCounter -= cooldownRate * Time.deltaTime; // down 4 per sec
-        } else
+        }
+        else
         {
             heatCounter -= overHeatCooldown * Time.deltaTime;
             if (heatCounter <= 0)
@@ -136,24 +171,39 @@ public class PlayerController : MonoBehaviour
 
         // setting overheat ui
         UIController.instance.overheatSlider.value = heatCounter;
-      
-        // Mouse Cursor Logic
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else if (Cursor.lockState == CursorLockMode.None)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                // player clicked on the window
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-        }        
     }
 
+    /// <summary>
+    /// Mouse Wheel, to Switch Weapons
+    /// </summary>
+    private void HandleWeaponSwitch()
+    {
+        // switching guns uaing mouse wheel, up
+        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0f)
+        {
+            selectedWeapon++;
+            if (selectedWeapon >= weapons.Length)
+            {
+                // wrap around to first weapon
+                selectedWeapon = 0;
+            }
+            SetWeapon();
+        }
+        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f)
+        {
+            selectedWeapon--;
+            if (selectedWeapon <= 0)
+            {
+                // wrap around to last weapon
+                selectedWeapon = weapons.Length - 1;
+            }
+            SetWeapon();
+        }
+    }
+
+    /// <summary>
+    ///  Shoots Primary weapons Main fire
+    /// </summary>
     private void Shoot()
     {
         // use a raycast for shooting
@@ -171,9 +221,9 @@ public class PlayerController : MonoBehaviour
         }
 
         // Overheating
-        shotCounter = timeBetweenShots;
+        shotCounter = weapons[selectedWeapon].timeBetweenShots;
 
-        heatCounter = heatPerShot;
+        heatCounter = weapons[selectedWeapon].heatPerShot;
 
         if (heatCounter >= maxHeatValue)
         {
@@ -184,6 +234,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles Mouse Movements for Camera
+    /// </summary>
     private void HandlePlayerLookMovement()
     {
         mouseInput = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y")) * mouseSensitivity;
@@ -203,5 +256,18 @@ public class PlayerController : MonoBehaviour
         {
             viewPoint.rotation = Quaternion.Euler(-verticalRotation, viewPoint.rotation.eulerAngles.y, viewPoint.rotation.eulerAngles.z);
         }
+    }    
+
+    /// <summary>
+    ///  Activeat current selected weapon and deactivate all others
+    /// </summary>
+    private void SetWeapon()
+    {
+        foreach (Weapon weapon in weapons)
+        {
+            weapon.gameObject.SetActive(false);
+        }
+
+        weapons[selectedWeapon].gameObject.SetActive(true);
     }
 }

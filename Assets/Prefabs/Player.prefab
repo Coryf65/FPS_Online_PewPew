@@ -469,6 +469,10 @@ MonoBehaviour:
   heatPerShot: 1
   cooldownRate: 4
   overHeatCooldown: 5
+  weapons:
+  - {fileID: 9015867167986491799}
+  - {fileID: 4269271330625316038}
+  - {fileID: 6692534638323554137}
 --- !u!1 &6562223311481555459
 GameObject:
   m_ObjectHideFlags: 0
