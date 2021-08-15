@@ -80,8 +80,6 @@ public class PlayerController : MonoBehaviour
         // start, direction, how far, what to hit
         isGrounded = Physics.Raycast(groundCheckPoint.position, Vector3.down, .25f, groundLayers);
 
-        Debug.Log(isGrounded);
-
         // jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -91,6 +89,12 @@ public class PlayerController : MonoBehaviour
         movement.y += Physics.gravity.y * Time.deltaTime * gravityModifier; // apply gravity
     
         characterController.Move(movement * Time.deltaTime);
+
+
+        if (Input.GetMouseButtonDown(0))
+        {            
+            Shoot();
+        }
 
         // Mouse Cursor Logic
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -106,6 +110,18 @@ public class PlayerController : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
+        }        
+    }
+
+    private void Shoot()
+    {
+        // use a raycast for shooting
+        Ray ray = camera.ViewportPointToRay(new Vector3(.5f, .5f, 0)); // center
+        ray.origin = camera.transform.position;
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Debug.Log($"Shot collided with: {hit.collider.gameObject.name}");
         }
     }
 
