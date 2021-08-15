@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     public Transform viewPoint;
     public float mouseSensitivity = 1f;
-    public bool IsInverted = false;
+    public bool isInverted = false;
     public float movementSpeed = 5f;
     public float runSpeed = 8f;
     public CharacterController characterController;
@@ -16,6 +16,12 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckPoint;
     public LayerMask groundLayers;
     public GameObject bulletImpactEffect;
+    public float timeBetweenShots = .1f;
+    public float shotCounter;
+    public float maxHeatValue = 10f;
+    public float heatPerShot = 1f;
+    public float cooldownRate = 4f;
+    public float overHeatCooldown = 5f;
 
     private Camera camera;
     private float verticalRotation;
@@ -24,6 +30,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 movement;
     private float activeMoveSpeed;
     private bool isGrounded;
+    private float heatCounter;
+    private bool isOverheated;
 
     // Start is called before the first frame update
     void Start()
@@ -91,12 +99,39 @@ public class PlayerController : MonoBehaviour
     
         characterController.Move(movement * Time.deltaTime);
 
+        if (!isOverheated)
+        {
+            // Shooting
+            if (Input.GetMouseButtonDown(0))
+            {
+                Shoot();
+            }
 
-        if (Input.GetMouseButtonDown(0))
-        {            
-            Shoot();
+            // full auto shooting
+            if (Input.GetMouseButton(0))
+            {
+                shotCounter -= Time.deltaTime; // count down
+                if (shotCounter <= 0)
+                {
+                    Shoot();
+                }
+            }
+            heatCounter -= cooldownRate * Time.deltaTime; // down 4 per sec
+        } else
+        {
+            heatCounter -= overHeatCooldown * Time.deltaTime;
+            if (heatCounter <= 0)
+            {
+                isOverheated = false;
+                UIController.instance.overheatMessage.gameObject.SetActive(false);
+            }
         }
 
+        if (heatCounter < 0)
+        {
+            heatCounter = 0f;
+        }
+      
         // Mouse Cursor Logic
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -122,12 +157,25 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Debug.Log($"Shot collided with: {hit.collider.gameObject.name}");
+            //Debug.Log($"Shot collided with: {hit.collider.gameObject.name}");
 
             GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
 
             // Cleanup
             Destroy(bulletImpactObject, 10f);
+        }
+
+        // Overheating
+        shotCounter = timeBetweenShots;
+
+        heatCounter = heatPerShot;
+
+        if (heatCounter >= maxHeatValue)
+        {
+            heatCounter = maxHeatValue;
+            isOverheated = true;
+
+            UIController.instance.overheatMessage.gameObject.SetActive(true);
         }
     }
 
@@ -141,7 +189,7 @@ public class PlayerController : MonoBehaviour
         verticalRotation += mouseInput.y;
         verticalRotation = Mathf.Clamp(verticalRotation, -60f, 60f);
 
-        if (IsInverted)
+        if (isInverted)
         {
             // rotating the view port, clamp to maxs
             viewPoint.rotation = Quaternion.Euler(verticalRotation, viewPoint.rotation.eulerAngles.y, viewPoint.rotation.eulerAngles.z);

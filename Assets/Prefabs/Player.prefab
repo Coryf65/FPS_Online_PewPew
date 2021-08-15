@@ -417,7 +417,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewPoint: {fileID: 1082865655}
   mouseSensitivity: 1
-  IsInverted: 0
+  isInverted: 0
   movementSpeed: 5
   runSpeed: 8
   characterController: {fileID: 7336774371688745401}
@@ -426,9 +426,15 @@ MonoBehaviour:
   groundCheckPoint: {fileID: 1330575103383264392}
   groundLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   bulletImpactEffect: {fileID: 760752906026400848, guid: e82ccb59a54d2ff4f8ff396913659e39,
     type: 3}
+  timeBetweenShots: 0.1
+  shotCounter: 0
+  maxHeatValue: 10
+  heatPerShot: 1
+  cooldownRate: 4
+  overHeatCooldown: 5
 --- !u!1 &7672768187356447281
 GameObject:
   m_ObjectHideFlags: 0
