@@ -40,6 +40,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
 
         camera = Camera.main;
+
+        UIController.instance.overheatSlider.maxValue = maxHeatValue;
     }
 
     // Update is called once per frame
@@ -131,6 +133,9 @@ public class PlayerController : MonoBehaviour
         {
             heatCounter = 0f;
         }
+
+        // setting overheat ui
+        UIController.instance.overheatSlider.value = heatCounter;
       
         // Mouse Cursor Logic
         if (Input.GetKeyDown(KeyCode.Escape))
