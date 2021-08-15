@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
     public Transform viewPoint;
     public float mouseSensitivity = 1f;
     public bool IsInverted = false;
     public float movementSpeed = 5f;
     public float runSpeed = 8f;
     public CharacterController characterController;
+    public float jumpForce = 12f;
+    public float gravityModifier = 2.5f;
+    public Transform groundCheckPoint;
+    public LayerMask groundLayers;
 
     private Camera camera;
     private float verticalRotation;
@@ -19,7 +22,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDirection;
     private Vector3 movement;
     private float activeMoveSpeed;
-    private float velocity;
+    private bool isGrounded;
 
     // Start is called before the first frame update
     void Start()
@@ -33,9 +36,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandlePlayerLookMovement();
-
         HandlePlayerMovement();
-
     }
 
     // Happens after Update
@@ -54,7 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
 
-        // 
+        // running
         if (Input.GetKey(KeyCode.LeftShift))
         {
             activeMoveSpeed = runSpeed;
@@ -63,18 +64,30 @@ public class PlayerController : MonoBehaviour
             activeMoveSpeed = movementSpeed;
         }
 
-        velocity = movement.y;
+        float velocity = movement.y;
 
         // based on players camera direction, then remove the sideways speed increase
         movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized * activeMoveSpeed; // added here to prevent jumping sped up
-       
-        if (!characterController.isGrounded)
+        movement.y = velocity;
+
+        if (characterController.isGrounded)
         {
             // set velocity when NOT on ground
-            movement.y = velocity;
+            movement.y = 0f;
         }
 
-        movement.y += Physics.gravity.y * Time.deltaTime; // apply gravity
+        // start, direction, how far, what to hit
+        isGrounded = Physics.Raycast(groundCheckPoint.position, Vector3.down, .25f, groundLayers);
+
+        Debug.Log(isGrounded);
+
+        // jumping
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            movement.y = jumpForce;
+        }
+
+        movement.y += Physics.gravity.y * Time.deltaTime * gravityModifier; // apply gravity
     
         characterController.Move(movement * Time.deltaTime);
     }
