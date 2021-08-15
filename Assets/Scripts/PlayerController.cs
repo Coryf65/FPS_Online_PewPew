@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public float gravityModifier = 2.5f;
     public Transform groundCheckPoint;
     public LayerMask groundLayers;
+    public GameObject bulletImpactEffect;
 
     private Camera camera;
     private float verticalRotation;
@@ -122,6 +123,11 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Debug.Log($"Shot collided with: {hit.collider.gameObject.name}");
+
+            GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
+
+            // Cleanup
+            Destroy(bulletImpactObject, 10f);
         }
     }
 
