@@ -8,4 +8,5 @@ public class Weapon : MonoBehaviour
     // Energy Weapons
     public float timeBetweenShots = .1f;
     public float heatPerShot = 1f;
+    public GameObject muzzleFlash;
 }

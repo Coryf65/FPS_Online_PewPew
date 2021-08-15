@@ -1137,7 +1137,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh21940
+  m_Name: pb_Mesh14052
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2749,18 +2749,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9213392234294548469, guid: 5a7a397b5c9b7db468dab748372cf2ad,
         type: 3}
-      propertyPath: maxHeatValue
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 9213392234294548469, guid: 5a7a397b5c9b7db468dab748372cf2ad,
-        type: 3}
-      propertyPath: heatPerShot
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 9213392234294548469, guid: 5a7a397b5c9b7db468dab748372cf2ad,
-        type: 3}
-      propertyPath: cooldownRate
-      value: 1.5
+      propertyPath: muzzleDisplayTime
+      value: 0.016666668
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a7a397b5c9b7db468dab748372cf2ad, type: 3}

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public float cooldownRate = 4f;
     public float overHeatCooldown = 5f;
     public Weapon[] weapons;
+    public float muzzleDisplayTime;
 
     private Camera camera;
     private float verticalRotation;
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
     private float heatCounter;
     private bool isOverheated;
     private int selectedWeapon;
+    private float muzzleCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -135,6 +137,18 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleWeaponActions()
     {
+
+        if (weapons[selectedWeapon].muzzleFlash.activeInHierarchy)
+        {
+            muzzleCounter -= Time.deltaTime;
+
+            if (muzzleCounter <= 0)
+            {
+                weapons[selectedWeapon].muzzleFlash.SetActive(false);
+            }
+        }
+
+
         if (!isOverheated)
         {
             // Shooting
@@ -232,6 +246,13 @@ public class PlayerController : MonoBehaviour
 
             UIController.instance.overheatMessage.gameObject.SetActive(true);
         }
+
+        weapons[selectedWeapon].muzzleFlash.SetActive(true);
+
+        muzzleCounter = muzzleDisplayTime;
+        // TODO: would like to set rotation rng rotation of x axis
+
+        //weapons[selectedWeapon].muzzleFlash.transform.rotation.x = UnityEngine.Random.rotation.x; 
     }
 
     /// <summary>
@@ -269,5 +290,7 @@ public class PlayerController : MonoBehaviour
         }
 
         weapons[selectedWeapon].gameObject.SetActive(true);
+        
+        weapons[selectedWeapon].muzzleFlash.SetActive(false);
     }
 }
