@@ -47,6 +47,10 @@ public class PlayerController : MonoBehaviour
 
         // Temp pick a weapon
         HandleWeaponSwitch();
+
+        Transform newSpawnLocation = SpawnManager.instance.GetRandomSpawnPoint();
+        transform.position = newSpawnLocation.position;
+        transform.rotation = newSpawnLocation.rotation;
     }
 
     // Update is called once per frame
