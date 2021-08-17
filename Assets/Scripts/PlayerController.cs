@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Mouse Wheel, to Switch Weapons
+    /// Mouse Wheel and number keys, to Switch Weapons
     /// </summary>
     private void HandleWeaponSwitch()
     {
@@ -216,6 +216,16 @@ public class PlayerController : MonoBehaviour
                 selectedWeapon = weapons.Length - 1;
             }
             SetWeapon();
+        }
+
+        // handle number row press
+        for (int i = 0; i < weapons.Length; i++)
+        {            
+            if (Input.GetKeyDown((i + 1).ToString()))
+            {
+                selectedWeapon = i;
+                SetWeapon();
+            }
         }
     }
 
