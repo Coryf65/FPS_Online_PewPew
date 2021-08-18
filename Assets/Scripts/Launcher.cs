@@ -24,9 +24,13 @@ public class Launcher : MonoBehaviourPunCallbacks
     public TMP_Text roomNameText;
     public GameObject errorScreen;
     public TMP_Text errorText;
+    public GameObject roomBrowserScreen;
+    public RoomButton roomButton;
     
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
+    [SerializeField]
+    private List<RoomButton> allRooms = new List<RoomButton>();
 
     private void Start()
     {
@@ -45,6 +49,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         createRoomScreen.SetActive(false);
         roomScreen.SetActive(false);
         errorScreen.SetActive(false);
+        roomBrowserScreen.SetActive(false);
     }
 
     public override void OnConnectedToMaster()
@@ -101,7 +106,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     /// <param name="message"></param>
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        errorText.text = $"Failed to Created Room {message}";
+        errorText.text = $"Failed to Create Room,  Error:{message}";
         CloseMenus();
         errorScreen.SetActive(true);
     }
@@ -126,4 +131,52 @@ public class Launcher : MonoBehaviourPunCallbacks
         menuButtons.SetActive(true);
     }
 
+    public void OpenRoomBrowser()
+    {
+        CloseMenus();
+        loadingText.text = "Going to rooom browser...";
+        roomBrowserScreen.SetActive(true);
+    }
+
+    public void CloseRoomBrowser()
+    {
+        CloseMenus();
+        loadingText.text = "Returning to Main Menu...";
+        menuButtons.SetActive(true);
+    }
+
+    /// <summary>
+    /// Anytime the room list changes
+    /// </summary>
+    /// <param name="roomList"></param>
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        foreach (RoomButton button in allRooms)
+        {
+            Destroy(button.gameObject);
+        }
+
+        allRooms.Clear();
+
+        roomButton.gameObject.SetActive(false);
+
+        // get all rooms available
+        for (int i = 0; i < roomList.Count; i++)
+        {
+            //// TODO: Cory try to implement, room size maxed out
+            //if (roomList[i].PlayerCount == MAX_PLAYERS_PER_ROOM)
+            //{
+            //    // disabled room, show 8/8 players?
+            //}
+
+            if (roomList[i].PlayerCount != roomList[i].MaxPlayers && roomList[i].RemovedFromList)
+            {
+                RoomButton newRoom = Instantiate(roomButton, roomButton.transform.parent);
+                newRoom.SetButtonDetails(roomList[i]);
+                newRoom.gameObject.SetActive(true);
+
+                allRooms.Add(newRoom);
+            }
+        }
+    }
 }
