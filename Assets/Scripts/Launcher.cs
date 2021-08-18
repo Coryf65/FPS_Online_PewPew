@@ -25,12 +25,15 @@ public class Launcher : MonoBehaviourPunCallbacks
     public GameObject errorScreen;
     public TMP_Text errorText;
     public GameObject roomBrowserScreen;
-    public RoomButton roomButton;
+    public RoomButton roomSelectButton;
+    public TMP_Text playerNameText;
     
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
     [SerializeField]
     private List<RoomButton> allRooms = new List<RoomButton>();
+    [SerializeField]
+    private List<TMP_Text> playerNamesInRoom = new List<TMP_Text>();
 
     private void Start()
     {
@@ -62,6 +65,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         CloseMenus();
         menuButtons.SetActive(true);
+
+        // create player names
+        PhotonNetwork.NickName = Random.seed.ToString();
     }
 
     public void OpenRoomCreationScreen()
@@ -97,6 +103,28 @@ public class Launcher : MonoBehaviourPunCallbacks
         roomScreen.SetActive(true);
 
         roomNameText.text = PhotonNetwork.CurrentRoom.Name;
+
+        ListAllPlayersInRoom();
+    }
+
+    private void ListAllPlayersInRoom()
+    {
+        foreach (TMP_Text playerName in playerNamesInRoom)
+        {
+            Destroy(playerName.gameObject);
+        }
+        playerNamesInRoom.Clear();
+
+        Player[] players = PhotonNetwork.PlayerList;
+
+        foreach (Player currentPlayer in players)
+        {
+            TMP_Text newPlayerLabel = Instantiate(playerNameText, playerNameText.transform.parent);
+            newPlayerLabel.text = currentPlayer.NickName;
+            newPlayerLabel.gameObject.SetActive(true);
+
+            playerNamesInRoom.Add(newPlayerLabel);
+        }
     }
 
     /// <summary>
@@ -158,7 +186,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         allRooms.Clear();
 
-        roomButton.gameObject.SetActive(false);
+        roomSelectButton.gameObject.SetActive(false);
 
         // get all rooms available
         for (int i = 0; i < roomList.Count; i++)
@@ -171,12 +199,33 @@ public class Launcher : MonoBehaviourPunCallbacks
 
             if (roomList[i].PlayerCount != roomList[i].MaxPlayers && roomList[i].RemovedFromList)
             {
-                RoomButton newRoom = Instantiate(roomButton, roomButton.transform.parent);
+                RoomButton newRoom = Instantiate(roomSelectButton, roomSelectButton.transform.parent);
                 newRoom.SetButtonDetails(roomList[i]);
                 newRoom.gameObject.SetActive(true);
 
                 allRooms.Add(newRoom);
             }
         }
+    }
+
+    /// <summary>
+    /// Join a room
+    /// </summary>
+    /// <param name="info"></param>
+    public void JoinRoom(RoomInfo info)
+    {
+        PhotonNetwork.JoinRoom(info.Name);
+
+        CloseMenus();
+        loadingText.text = $"Joining {info.Name} room";
+        loadingScreen.SetActive(true);
+    }
+
+    /// <summary>
+    /// Quit Game to Desktop
+    /// </summary>
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

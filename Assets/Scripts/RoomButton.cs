@@ -19,4 +19,9 @@ public class RoomButton : MonoBehaviour
         buttonText.text = roomInfo.Name;
         playerCountText.text = $"{roomInfo.PlayerCount}/{roomInfo.MaxPlayers}";
     }
+
+    public void OpenRoom()
+    {
+        Launcher.instance.JoinRoom(roomInfo);
+    }
 }
