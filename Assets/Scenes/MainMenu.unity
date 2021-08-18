@@ -349,7 +349,17 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 992555620}
+      objectReference: {fileID: 992555625}
+    - target: {fileID: 3397571387577666330, guid: 1f3b018bec7770b44ad5bc78111e9d11,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LeaveRoom
+      objectReference: {fileID: 0}
+    - target: {fileID: 3397571387577666330, guid: 1f3b018bec7770b44ad5bc78111e9d11,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3397571387577666331, guid: 1f3b018bec7770b44ad5bc78111e9d11,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1070,7 +1080,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &535267074
 RectTransform:
   m_ObjectHideFlags: 0
