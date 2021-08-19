@@ -13,21 +13,26 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         instance = this;
     }
-
-    public GameObject menuButtons;
+    [Header("Main Menu Screen")]
     public TMP_Text gameTitle;
+    public GameObject menuButtons;
+    [Header("Loading Screen")]
     public GameObject loadingScreen;
     public TMP_Text loadingText;
+    [Header("Room Creation Screen")]
     public GameObject createRoomScreen;
     public TMP_InputField roomNameInput;
+    [Header("Joined Room Screen")]
     public GameObject roomScreen;
     public TMP_Text roomNameText;
+    public TMP_Text playerNameText;
+    [Header("Error Screen")]
     public GameObject errorScreen;
     public TMP_Text errorText;
+    [Header("Room Browser Screen")]
     public GameObject roomBrowserScreen;
     public RoomButton roomSelectButton;
-    public TMP_Text playerNameText;
-    
+        
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
     [SerializeField]
@@ -96,6 +101,9 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public override void OnJoinedRoom()
     {
         CloseMenus();
@@ -125,6 +133,20 @@ public class Launcher : MonoBehaviourPunCallbacks
 
             playerNamesInRoom.Add(newPlayerLabel);
         }
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        TMP_Text newPlayerLabel = Instantiate(playerNameText, playerNameText.transform.parent);
+        newPlayerLabel.text = newPlayer.NickName;
+        newPlayerLabel.gameObject.SetActive(true);
+
+        playerNamesInRoom.Add(newPlayerLabel);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        ListAllPlayersInRoom();
     }
 
     /// <summary>
@@ -191,11 +213,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         // get all rooms available
         for (int i = 0; i < roomList.Count; i++)
         {
-            //// TODO: Cory try to implement, room size maxed out
-            //if (roomList[i].PlayerCount == MAX_PLAYERS_PER_ROOM)
-            //{
-            //    // disabled room, show 8/8 players?
-            //}
 
             if (roomList[i].PlayerCount != roomList[i].MaxPlayers && roomList[i].RemovedFromList)
             {
