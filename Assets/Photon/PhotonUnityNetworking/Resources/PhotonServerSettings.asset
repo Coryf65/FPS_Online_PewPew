@@ -29,9 +29,9 @@ MonoBehaviour:
     EnableLobbyStatistics: 0
     NetworkLogging: 5
   DevRegion: us
-  PunLogging: 1
+  PunLogging: 0
   EnableSupportLogger: 0
-  RunInBackground: 1
+  RunInBackground: 0
   StartInOfflineMode: 0
   RpcList:
   - ClickRpc

@@ -32,6 +32,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     [Header("Room Browser Screen")]
     public GameObject roomBrowserScreen;
     public RoomButton roomSelectButton;
+    [Header("Player Creation Screen")]
+    public GameObject playerCreationScreen;
+    public TMP_InputField playerNameInput;
         
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
@@ -39,6 +42,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     private List<RoomButton> allRoomButtons = new List<RoomButton>();
     [SerializeField]
     private List<TMP_Text> playerNamesInRoom = new List<TMP_Text>();
+    private bool isNicknameSet = false;
 
     private void Start()
     {
@@ -58,6 +62,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         roomScreen.SetActive(false);
         errorScreen.SetActive(false);
         roomBrowserScreen.SetActive(false);
+        playerCreationScreen.SetActive(false);
     }
 
     public override void OnConnectedToMaster()
@@ -71,8 +76,23 @@ public class Launcher : MonoBehaviourPunCallbacks
         CloseMenus();
         menuButtons.SetActive(true);
 
-        // create player names
-        PhotonNetwork.NickName = Random.seed.ToString();
+        if (!isNicknameSet)
+        {
+            CloseMenus();
+            playerCreationScreen.SetActive(true);
+
+            if (PlayerPrefs.HasKey("PlayerNickname"))
+            {
+                playerNameInput.text = PlayerPrefs.GetString("PlayerNickname");
+            }
+        }
+        else
+        {
+            PhotonNetwork.NickName = PlayerPrefs.GetString("PlayerNickname");
+        }
+
+        Debug.LogError(message: $"PhotonNetwork.NickName: {PhotonNetwork.NickName}");
+        Debug.LogError(message: $"PlayerPrefs.PlayerNickname: {PlayerPrefs.GetString("PlayerNickname")}");
     }
 
     public void OpenRoomCreationScreen()
@@ -235,6 +255,21 @@ public class Launcher : MonoBehaviourPunCallbacks
         CloseMenus();
         loadingText.text = $"Joining {info.Name} room";
         loadingScreen.SetActive(true);
+    }
+
+    public void SetPlayerNickname()
+    {
+        if (!string.IsNullOrEmpty(playerNameInput.text))
+        {
+            PhotonNetwork.NickName = playerNameInput.text;
+
+            PlayerPrefs.SetString("PlayerNickname", playerNameInput.text);
+
+            CloseMenus();
+            menuButtons.SetActive(true);
+
+            isNicknameSet = true;
+        }
     }
 
     /// <summary>
