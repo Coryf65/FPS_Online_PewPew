@@ -36,7 +36,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
     [SerializeField]
-    private List<RoomButton> allRooms = new List<RoomButton>();
+    private List<RoomButton> allRoomButtons = new List<RoomButton>();
     [SerializeField]
     private List<TMP_Text> playerNamesInRoom = new List<TMP_Text>();
 
@@ -201,26 +201,25 @@ public class Launcher : MonoBehaviourPunCallbacks
     /// <param name="roomList"></param>
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        foreach (RoomButton button in allRooms)
+        foreach (RoomButton button in allRoomButtons)
         {
             Destroy(button.gameObject);
         }
 
-        allRooms.Clear();
+        allRoomButtons.Clear();
 
         roomSelectButton.gameObject.SetActive(false);
 
         // get all rooms available
         for (int i = 0; i < roomList.Count; i++)
         {
-
-            if (roomList[i].PlayerCount != roomList[i].MaxPlayers && roomList[i].RemovedFromList)
+            if (roomList[i].PlayerCount != roomList[i].MaxPlayers)
             {
                 RoomButton newRoom = Instantiate(roomSelectButton, roomSelectButton.transform.parent);
                 newRoom.SetButtonDetails(roomList[i]);
                 newRoom.gameObject.SetActive(true);
 
-                allRooms.Add(newRoom);
+                allRoomButtons.Add(newRoom);
             }
         }
     }

@@ -2874,7 +2874,7 @@ MonoBehaviour:
   errorText: {fileID: 449974520}
   roomBrowserScreen: {fileID: 152817194}
   roomSelectButton: {fileID: 48669062}
-  allRooms: []
+  allRoomButtons: []
   playerNamesInRoom: []
 --- !u!1 &1211825402
 GameObject:
