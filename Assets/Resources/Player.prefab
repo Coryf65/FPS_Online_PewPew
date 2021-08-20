@@ -478,6 +478,7 @@ MonoBehaviour:
   - {fileID: 4269271330625316038}
   - {fileID: 6692534638323554137}
   muzzleDisplayTime: 0.016666668
+  photonView: {fileID: 0}
 --- !u!114 &1823127989441283070
 MonoBehaviour:
   m_ObjectHideFlags: 0

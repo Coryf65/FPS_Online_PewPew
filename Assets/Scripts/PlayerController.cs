@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,6 +24,7 @@ public class PlayerController : MonoBehaviour
     public float overHeatCooldown = 5f;
     public Weapon[] weapons;
     public float muzzleDisplayTime;
+    public PhotonView photonView;
 
     private Camera camera;
     private float verticalRotation;
@@ -38,34 +41,35 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        photonView = GetComponent<PhotonView>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        camera = Camera.main;
-
+        camera = viewPoint.GetComponent<Camera>();
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
-
         SetWeapon();
-
-        Transform newSpawnLocation = SpawnManager.instance.GetRandomSpawnPoint();
-        transform.position = newSpawnLocation.position;
-        transform.rotation = newSpawnLocation.rotation;
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandlePlayerLookMovement();
-        HandlePlayerMovement();
-        HandleMouseCursor();
-        HandleWeaponActions();
-        HandleWeaponSwitch();
+        if (photonView.AmOwner)
+        {
+            HandlePlayerLookMovement();
+            HandlePlayerMovement();
+            HandleMouseCursor();
+            HandleWeaponActions();
+            HandleWeaponSwitch();
+        }        
     }    
 
     // Happens after Update
     private void LateUpdate()
     {
-        HandleCameraPostion();
+        if (photonView.AmOwner)
+        {
+            HandleCameraPostion();
+        }        
     }
 
     private void HandleCameraPostion()
