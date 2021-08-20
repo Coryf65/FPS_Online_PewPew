@@ -38,6 +38,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     public TMP_InputField playerNameInput;
     [Header("Levels")]
     public string levelToLoad;
+    [Header("TEST Tools")]
+    public GameObject testGameBtn;
+
 
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
@@ -55,6 +58,11 @@ public class Launcher : MonoBehaviourPunCallbacks
         loadingText.text = "Connecting to Server";
 
         PhotonNetwork.ConnectUsingSettings();
+
+#if UNITY_EDITOR
+        // Only runs in editor
+        testGameBtn.SetActive(true);
+#endif
     }
 
     void CloseMenus()
@@ -300,6 +308,20 @@ public class Launcher : MonoBehaviourPunCallbacks
         {
             startGameButton.SetActive(false);
         }
+    }
+
+    public void QuickStartGame()
+    {
+        RoomOptions options = new RoomOptions()
+        {
+            MaxPlayers = MAX_PLAYERS_PER_ROOM
+        };
+
+        PhotonNetwork.CreateRoom("TEST_ROOM");
+        CloseMenus();
+        loadingText.text = "TEST MODE";
+        loadingScreen.SetActive(true);
+
     }
 
     /// <summary>

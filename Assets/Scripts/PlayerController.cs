@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private float heatCounter;
     private bool isOverheated;
-    private int selectedWeapon;
+    private int selectedWeapon = 0;
     private float muzzleCounter;
 
     // Start is called before the first frame update
@@ -45,8 +45,7 @@ public class PlayerController : MonoBehaviour
 
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
 
-        // Temp pick a weapon
-        HandleWeaponSwitch();
+        SetWeapon();
 
         Transform newSpawnLocation = SpawnManager.instance.GetRandomSpawnPoint();
         transform.position = newSpawnLocation.position;
@@ -207,10 +206,10 @@ public class PlayerController : MonoBehaviour
             }
             SetWeapon();
         }
-        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f)
+        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f) // MouseWheel Down
         {
             selectedWeapon--;
-            if (selectedWeapon <= 0)
+            if (selectedWeapon < 0)
             {
                 // wrap around to last weapon
                 selectedWeapon = weapons.Length - 1;
@@ -303,8 +302,7 @@ public class PlayerController : MonoBehaviour
             weapon.gameObject.SetActive(false);
         }
 
-        weapons[selectedWeapon].gameObject.SetActive(true);
-        
+        weapons[selectedWeapon].gameObject.SetActive(true);        
         weapons[selectedWeapon].muzzleFlash.SetActive(false);
     }
 }
