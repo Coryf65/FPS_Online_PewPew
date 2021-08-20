@@ -26,6 +26,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public GameObject roomScreen;
     public TMP_Text roomNameText;
     public TMP_Text playerNameText;
+    public GameObject startGameButton;
     [Header("Error Screen")]
     public GameObject errorScreen;
     public TMP_Text errorText;
@@ -35,7 +36,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     [Header("Player Creation Screen")]
     public GameObject playerCreationScreen;
     public TMP_InputField playerNameInput;
-        
+    [Header("Levels")]
+    public string levelToLoad;
+
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
     [SerializeField]
@@ -68,6 +71,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {       
         PhotonNetwork.JoinLobby();
+        PhotonNetwork.AutomaticallySyncScene = true; // Tells us which scene to load up
         loadingText.text = "Attempting to Join a Open Lobby";
     }
 
@@ -90,9 +94,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.NickName = PlayerPrefs.GetString("PlayerNickname");
         }
-
-        Debug.LogError(message: $"PhotonNetwork.NickName: {PhotonNetwork.NickName}");
-        Debug.LogError(message: $"PlayerPrefs.PlayerNickname: {PlayerPrefs.GetString("PlayerNickname")}");
     }
 
     public void OpenRoomCreationScreen()
@@ -133,6 +134,16 @@ public class Launcher : MonoBehaviourPunCallbacks
         roomNameText.text = PhotonNetwork.CurrentRoom.Name;
 
         ListAllPlayersInRoom();
+
+        // Player host, allowed to start game
+        if (PhotonNetwork.IsMasterClient)
+        {
+            startGameButton.SetActive(true);
+        } else
+        {
+            // Could create a ready up system here
+            startGameButton.SetActive(false);
+        }
     }
 
     private void ListAllPlayersInRoom()
@@ -270,6 +281,11 @@ public class Launcher : MonoBehaviourPunCallbacks
 
             isNicknameSet = true;
         }
+    }
+
+    public void StartGame()
+    {
+        PhotonNetwork.LoadLevel(levelToLoad);
     }
 
     /// <summary>
