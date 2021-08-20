@@ -288,6 +288,20 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel(levelToLoad);
     }
 
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+
+        // Host left Lobby, switch to new player
+        if (PhotonNetwork.IsMasterClient)
+        {
+            startGameButton.SetActive(true);
+        }
+        else
+        {
+            startGameButton.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// Quit Game to Desktop
     /// </summary>
