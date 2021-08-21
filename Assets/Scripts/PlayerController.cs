@@ -26,8 +26,8 @@ public class PlayerController : MonoBehaviour
     public float muzzleDisplayTime;
     public PhotonView photonView;
     public GameObject playerHitEffect;
+    public Camera camera;
 
-    private Camera camera;
     private float verticalRotation;
     private Vector2 mouseInput;
     private Vector3 moveDirection;
@@ -46,7 +46,6 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        camera = viewPoint.GetComponent<Camera>();
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
         SetWeapon();
     }
@@ -246,8 +245,9 @@ public class PlayerController : MonoBehaviour
         {
             if (hit.collider.gameObject.tag == "Player")
             {
-
                 PhotonNetwork.Instantiate(playerHitEffect.name, hit.point, Quaternion.identity);
+
+                hit.collider.gameObject.GetPhotonView().RPC("DamagePlayer", RpcTarget.All, photonView.Owner.NickName); // sending nickname across the RPC call
             } else
             {
                 GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
@@ -270,12 +270,28 @@ public class PlayerController : MonoBehaviour
             UIController.instance.overheatMessage.gameObject.SetActive(true);
         }
 
+        // TODO: would like to set rotation rng rotation of x axis
+        //weapons[selectedWeapon].muzzleFlash.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0, 360));
+
         weapons[selectedWeapon].muzzleFlash.SetActive(true);
 
         muzzleCounter = muzzleDisplayTime;
-        // TODO: would like to set rotation rng rotation of x axis
+    }
 
-        //weapons[selectedWeapon].muzzleFlash.transform.rotation.x = UnityEngine.Random.rotation.x; 
+    [PunRPC] // can call this function to run at the same time across network
+    public void DamagePlayer(string damageDealer)
+    {
+        Damage(damageDealer);
+    }
+
+    public void Damage(string damageDealer)
+    {
+        if (photonView.IsMine)
+        {
+            //Debug.LogError($"{photonView.Owner.NickName} has been hit by {damageDealer}");
+            PlayerSpawner.instance.Died();
+        }
+        
     }
 
     /// <summary>
