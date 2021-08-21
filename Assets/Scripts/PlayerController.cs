@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     public Weapon[] weapons;
     public float muzzleDisplayTime;
     public PhotonView photonView;
+    public GameObject playerHitEffect;
 
     private Camera camera;
     private float verticalRotation;
@@ -243,12 +244,17 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            //Debug.Log($"Shot collided with: {hit.collider.gameObject.name}");
+            if (hit.collider.gameObject.tag == "Player")
+            {
 
-            GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
+                PhotonNetwork.Instantiate(playerHitEffect.name, hit.point, Quaternion.identity);
+            } else
+            {
+                GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
 
-            // Cleanup
-            Destroy(bulletImpactObject, 10f);
+                Destroy(bulletImpactObject, 10f);
+            }
+            
         }
 
         // Overheating

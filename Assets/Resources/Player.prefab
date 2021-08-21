@@ -478,7 +478,9 @@ MonoBehaviour:
   - {fileID: 4269271330625316038}
   - {fileID: 6692534638323554137}
   muzzleDisplayTime: 0.016666668
-  photonView: {fileID: 0}
+  photonView: {fileID: 1823127989441283070}
+  playerHitEffect: {fileID: 760752906026400848, guid: 316c931f9c405c04b92caf090f797709,
+    type: 3}
 --- !u!114 &1823127989441283070
 MonoBehaviour:
   m_ObjectHideFlags: 0
