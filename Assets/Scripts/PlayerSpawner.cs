@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 public class PlayerSpawner : MonoBehaviour
-{
+{    
     // Singleton
     public static PlayerSpawner instance;
     public GameObject deathEffect;
@@ -16,8 +16,9 @@ public class PlayerSpawner : MonoBehaviour
 
     public GameObject playerPrefab;
 
+    [SerializeField]
+    private const float respawnTime = 5f;
     private GameObject player;
-
 
     // Start is called before the first frame update
     void Start()
@@ -40,12 +41,29 @@ public class PlayerSpawner : MonoBehaviour
     /// <summary>
     ///  Player has died
     /// </summary>
-    public void Died()
-    {
-        PhotonNetwork.Instantiate(deathEffect.name, player.transform.position, Quaternion.identity);
+    public void Died(string damager)
+    {       
+        UIController.instance.deathText.text = $"You were killed by {damager}";
 
+        // run a timer to wait
+        if (player != null)
+        {
+            StartCoroutine(DeathCoroutine());
+        }
+    }
+
+    public IEnumerator DeathCoroutine()
+    {
+        // spawn effect
+        PhotonNetwork.Instantiate(deathEffect.name, player.transform.position, Quaternion.identity);
+        // Destroy the player
         PhotonNetwork.Destroy(player);
-        
+        UIController.instance.deathScreen.SetActive(true);
+
+        yield return new WaitForSeconds(respawnTime);
+
+        UIController.instance.deathScreen.SetActive(false);
+
         SpawnPlayer();
     }
 }

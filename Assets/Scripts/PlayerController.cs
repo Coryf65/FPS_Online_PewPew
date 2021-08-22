@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public PhotonView photonView;
     public GameObject playerHitEffect;
     public Camera camera;
+    public int maxHealth = 100;
 
     private float verticalRotation;
     private Vector2 mouseInput;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
     private bool isOverheated;
     private int selectedWeapon = 0;
     private float muzzleCounter;
+    private int currentHealth;
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
         SetWeapon();
+
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -247,7 +251,8 @@ public class PlayerController : MonoBehaviour
             {
                 PhotonNetwork.Instantiate(playerHitEffect.name, hit.point, Quaternion.identity);
 
-                hit.collider.gameObject.GetPhotonView().RPC("DamagePlayer", RpcTarget.All, photonView.Owner.NickName); // sending nickname across the RPC call
+                // Calls DamagePlayer()
+                hit.collider.gameObject.GetPhotonView().RPC("DamagePlayer", RpcTarget.All, photonView.Owner.NickName, weapons[selectedWeapon].weaponDamage); // sending nickname across the RPC call
             } else
             {
                 GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
@@ -278,18 +283,33 @@ public class PlayerController : MonoBehaviour
         muzzleCounter = muzzleDisplayTime;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="damageDealer"></param>
+    /// <param name="damageAmount"></param>
     [PunRPC] // can call this function to run at the same time across network
-    public void DamagePlayer(string damageDealer)
+    public void DamagePlayer(string damageDealer, int damageAmount)
     {
-        Damage(damageDealer);
+        Damage(damageDealer, damageAmount);
     }
 
-    public void Damage(string damageDealer)
+    /// <summary>
+    ///  Handled as an RPC
+    /// </summary>
+    /// <param name="damageDealer"></param>
+    /// <param name="damageAmount"></param>
+    public void Damage(string damageDealer, int damageAmount)
     {
         if (photonView.IsMine)
         {
-            //Debug.LogError($"{photonView.Owner.NickName} has been hit by {damageDealer}");
-            PlayerSpawner.instance.Died();
+            currentHealth -= damageAmount;
+
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                PlayerSpawner.instance.Died(damageDealer);
+            }
         }
         
     }

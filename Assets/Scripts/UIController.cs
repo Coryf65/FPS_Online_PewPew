@@ -13,18 +13,17 @@ public class UIController : MonoBehaviour
         instance = this;
     }
 
+    [Header("Player UI")]
     public TMP_Text overheatMessage;
     public Slider overheatSlider;
+    [Header("Death Screen")]
+    public GameObject deathScreen;
+    public TMP_Text deathText;
+
 
     // Start is called before the first frame update
     void Start()
     {
         overheatMessage.gameObject.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

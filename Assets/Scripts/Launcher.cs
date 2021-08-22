@@ -319,9 +319,11 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         PhotonNetwork.CreateRoom("TEST_ROOM");
         CloseMenus();
+        
         loadingText.text = "TEST MODE";
         loadingScreen.SetActive(true);
 
+        StartGame();
     }
 
     /// <summary>
