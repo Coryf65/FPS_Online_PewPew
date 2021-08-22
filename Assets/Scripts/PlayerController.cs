@@ -48,10 +48,12 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        UIController.instance.overheatSlider.maxValue = maxHeatValue;
-        SetWeapon();
-
         currentHealth = maxHealth;
+        UIController.instance.healthDisplay.SetActive(true);
+        UIController.instance.overheatSlider.maxValue = maxHeatValue;
+        UIController.instance.healthAmountText.text = currentHealth.ToString();
+
+        SetWeapon();
     }
 
     // Update is called once per frame
@@ -59,12 +61,15 @@ public class PlayerController : MonoBehaviour
     {
         if (photonView.AmOwner)
         {
-            HandlePlayerLookMovement();
-            HandlePlayerMovement();
             HandleMouseCursor();
-            HandleWeaponActions();
-            HandleWeaponSwitch();
-        }        
+            if (!Cursor.visible)
+            {
+                HandlePlayerLookMovement();
+                HandlePlayerMovement();
+                HandleWeaponActions();
+                HandleWeaponSwitch();
+            }            
+        }  
     }    
 
     // Happens after Update
@@ -130,7 +135,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.visible = true;            
         }
         else if (Cursor.lockState == CursorLockMode.None)
         {
@@ -148,7 +153,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleWeaponActions()
     {
-
         if (weapons[selectedWeapon].muzzleFlash.activeInHierarchy)
         {
             muzzleCounter -= Time.deltaTime;
@@ -158,7 +162,6 @@ public class PlayerController : MonoBehaviour
                 weapons[selectedWeapon].muzzleFlash.SetActive(false);
             }
         }
-
 
         if (!isOverheated)
         {
@@ -304,14 +307,20 @@ public class PlayerController : MonoBehaviour
         if (photonView.IsMine)
         {
             currentHealth -= damageAmount;
+            Mathf.Clamp(currentHealth, 0, maxHealth);
+
+            UIController.instance.healthAmountText.text = currentHealth.ToString();
+            // TODO: maybe make heart shrink?
+
 
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
                 PlayerSpawner.instance.Died(damageDealer);
             }
-        }
-        
+
+            UIController.instance.healthAmountText.text = currentHealth.ToString();
+        }        
     }
 
     /// <summary>

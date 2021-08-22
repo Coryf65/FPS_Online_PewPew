@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class UIController : MonoBehaviour
 {
@@ -19,6 +20,10 @@ public class UIController : MonoBehaviour
     [Header("Death Screen")]
     public GameObject deathScreen;
     public TMP_Text deathText;
+    [Header("Health UI")]
+    public GameObject healthDisplay;
+    public Image heartImage;
+    public TMP_Text healthAmountText;
 
 
     // Start is called before the first frame update

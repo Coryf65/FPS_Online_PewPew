@@ -322,8 +322,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         
         loadingText.text = "TEST MODE";
         loadingScreen.SetActive(true);
-
-        StartGame();
     }
 
     /// <summary>

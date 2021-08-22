@@ -401,6 +401,7 @@ MonoBehaviour:
   playerHitEffect: {fileID: 760752906026400848, guid: 316c931f9c405c04b92caf090f797709,
     type: 3}
   camera: {fileID: 7694805685168011341}
+  maxHealth: 100
 --- !u!114 &1823127989441283070
 MonoBehaviour:
   m_ObjectHideFlags: 0
