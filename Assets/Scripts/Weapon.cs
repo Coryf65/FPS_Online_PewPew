@@ -9,4 +9,5 @@ public class Weapon : MonoBehaviour
     public float timeBetweenShots = .1f;
     public float heatPerShot = 1f;
     public GameObject muzzleFlash;
+    public int weaponDamage;
 }

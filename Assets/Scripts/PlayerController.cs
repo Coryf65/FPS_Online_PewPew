@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Realtime;
+using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,8 +24,11 @@ public class PlayerController : MonoBehaviour
     public float overHeatCooldown = 5f;
     public Weapon[] weapons;
     public float muzzleDisplayTime;
+    public PhotonView photonView;
+    public GameObject playerHitEffect;
+    public Camera camera;
+    public int maxHealth = 100;
 
-    private Camera camera;
     private float verticalRotation;
     private Vector2 mouseInput;
     private Vector3 moveDirection;
@@ -32,41 +37,48 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private float heatCounter;
     private bool isOverheated;
-    private int selectedWeapon;
+    private int selectedWeapon = 0;
     private float muzzleCounter;
+    private int currentHealth;
 
     // Start is called before the first frame update
     void Start()
     {
+        photonView = GetComponent<PhotonView>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        camera = Camera.main;
-
+        currentHealth = maxHealth;
+        UIController.instance.healthDisplay.SetActive(true);
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
+        UIController.instance.healthAmountText.text = currentHealth.ToString();
 
-        // Temp pick a weapon
-        HandleWeaponSwitch();
-
-        Transform newSpawnLocation = SpawnManager.instance.GetRandomSpawnPoint();
-        transform.position = newSpawnLocation.position;
-        transform.rotation = newSpawnLocation.rotation;
+        SetWeapon();
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandlePlayerLookMovement();
-        HandlePlayerMovement();
-        HandleMouseCursor();
-        HandleWeaponActions();
-        HandleWeaponSwitch();
+        if (photonView.AmOwner)
+        {
+            HandleMouseCursor();
+            if (!Cursor.visible)
+            {
+                HandlePlayerLookMovement();
+                HandlePlayerMovement();
+                HandleWeaponActions();
+                HandleWeaponSwitch();
+            }            
+        }  
     }    
 
     // Happens after Update
     private void LateUpdate()
     {
-        HandleCameraPostion();
+        if (photonView.AmOwner)
+        {
+            HandleCameraPostion();
+        }        
     }
 
     private void HandleCameraPostion()
@@ -123,7 +135,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.visible = true;            
         }
         else if (Cursor.lockState == CursorLockMode.None)
         {
@@ -141,7 +153,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleWeaponActions()
     {
-
         if (weapons[selectedWeapon].muzzleFlash.activeInHierarchy)
         {
             muzzleCounter -= Time.deltaTime;
@@ -151,7 +162,6 @@ public class PlayerController : MonoBehaviour
                 weapons[selectedWeapon].muzzleFlash.SetActive(false);
             }
         }
-
 
         if (!isOverheated)
         {
@@ -207,10 +217,10 @@ public class PlayerController : MonoBehaviour
             }
             SetWeapon();
         }
-        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f)
+        else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f) // MouseWheel Down
         {
             selectedWeapon--;
-            if (selectedWeapon <= 0)
+            if (selectedWeapon < 0)
             {
                 // wrap around to last weapon
                 selectedWeapon = weapons.Length - 1;
@@ -240,12 +250,19 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            //Debug.Log($"Shot collided with: {hit.collider.gameObject.name}");
+            if (hit.collider.gameObject.tag == "Player")
+            {
+                PhotonNetwork.Instantiate(playerHitEffect.name, hit.point, Quaternion.identity);
 
-            GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
+                // Calls DamagePlayer()
+                hit.collider.gameObject.GetPhotonView().RPC("DamagePlayer", RpcTarget.All, photonView.Owner.NickName, weapons[selectedWeapon].weaponDamage); // sending nickname across the RPC call
+            } else
+            {
+                GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
 
-            // Cleanup
-            Destroy(bulletImpactObject, 10f);
+                Destroy(bulletImpactObject, 10f);
+            }
+            
         }
 
         // Overheating
@@ -261,12 +278,49 @@ public class PlayerController : MonoBehaviour
             UIController.instance.overheatMessage.gameObject.SetActive(true);
         }
 
+        // TODO: would like to set rotation rng rotation of x axis
+        //weapons[selectedWeapon].muzzleFlash.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0, 360));
+
         weapons[selectedWeapon].muzzleFlash.SetActive(true);
 
         muzzleCounter = muzzleDisplayTime;
-        // TODO: would like to set rotation rng rotation of x axis
+    }
 
-        //weapons[selectedWeapon].muzzleFlash.transform.rotation.x = UnityEngine.Random.rotation.x; 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="damageDealer"></param>
+    /// <param name="damageAmount"></param>
+    [PunRPC] // can call this function to run at the same time across network
+    public void DamagePlayer(string damageDealer, int damageAmount)
+    {
+        Damage(damageDealer, damageAmount);
+    }
+
+    /// <summary>
+    ///  Handled as an RPC
+    /// </summary>
+    /// <param name="damageDealer"></param>
+    /// <param name="damageAmount"></param>
+    public void Damage(string damageDealer, int damageAmount)
+    {
+        if (photonView.IsMine)
+        {
+            currentHealth -= damageAmount;
+            Mathf.Clamp(currentHealth, 0, maxHealth);
+
+            UIController.instance.healthAmountText.text = currentHealth.ToString();
+            // TODO: maybe make heart shrink?
+
+
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                PlayerSpawner.instance.Died(damageDealer);
+            }
+
+            UIController.instance.healthAmountText.text = currentHealth.ToString();
+        }        
     }
 
     /// <summary>
@@ -303,8 +357,7 @@ public class PlayerController : MonoBehaviour
             weapon.gameObject.SetActive(false);
         }
 
-        weapons[selectedWeapon].gameObject.SetActive(true);
-        
+        weapons[selectedWeapon].gameObject.SetActive(true);        
         weapons[selectedWeapon].muzzleFlash.SetActive(false);
     }
 }
