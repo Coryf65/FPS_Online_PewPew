@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
         UIController.instance.healthAmountText.text = currentHealth.ToString();
 
         PositionWeaponOnPlayer();
-        SetWeapon();
+        photonView.RPC("SetWeapon", RpcTarget.All, selectedWeapon);
     }    
 
     // Update is called once per frame
@@ -244,7 +244,7 @@ public class PlayerController : MonoBehaviour
                 // wrap around to first weapon
                 selectedWeapon = 0;
             }
-            SetWeapon();
+            photonView.RPC("SetWeapon", RpcTarget.All, selectedWeapon);
         }
         else if (Input.GetAxisRaw("Mouse ScrollWheel") < 0f) // MouseWheel Down
         {
@@ -254,7 +254,7 @@ public class PlayerController : MonoBehaviour
                 // wrap around to last weapon
                 selectedWeapon = weapons.Length - 1;
             }
-            SetWeapon();
+            photonView.RPC("SetWeapon", RpcTarget.All, selectedWeapon);
         }
 
         // handle number row press
@@ -263,7 +263,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown((i + 1).ToString()))
             {
                 selectedWeapon = i;
-                SetWeapon();
+                photonView.RPC("SetWeapon", RpcTarget.All, selectedWeapon);
             }
         }
     }
@@ -379,7 +379,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     ///  Activeat current selected weapon and deactivate all others
     /// </summary>
-    private void SetWeapon()
+    private void SwitchWeapon()
     {
         foreach (Weapon weapon in weapons)
         {
@@ -388,5 +388,15 @@ public class PlayerController : MonoBehaviour
 
         weapons[selectedWeapon].gameObject.SetActive(true);        
         weapons[selectedWeapon].muzzleFlash.SetActive(false);
+    }
+
+    [PunRPC]
+    private void SetWeapon(int weaponIndex)
+    {
+        if (weaponIndex < weapons.Length)
+        {
+            selectedWeapon = weaponIndex;
+            SwitchWeapon();
+        }
     }
 }
