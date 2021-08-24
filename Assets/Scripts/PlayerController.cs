@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
         UIController.instance.healthAmountText.text = currentHealth.ToString();
 
+
         SetWeapon();
     }
 
@@ -70,8 +71,20 @@ public class PlayerController : MonoBehaviour
                 HandlePlayerAnimations();
                 HandleWeaponActions();
                 HandleWeaponSwitch();
+                HandleMenuActions();
             }            
         }  
+    }
+
+    private void HandleMenuActions()
+    {
+        if (photonView.AmOwner)
+        {
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                UIController.instance.ToggleUI();
+            }
+        }
     }
 
     private void HandlePlayerAnimations()
@@ -87,7 +100,7 @@ public class PlayerController : MonoBehaviour
         if (photonView.AmOwner)
         {
             HandleCameraPostion();
-        }        
+        }
     }
 
     private void HandleCameraPostion()

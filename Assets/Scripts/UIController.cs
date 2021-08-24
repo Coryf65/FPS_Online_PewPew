@@ -15,8 +15,12 @@ public class UIController : MonoBehaviour
     }
 
     [Header("Player UI")]
+    [Space]
+    public GameObject playerUIContainer;
     public TMP_Text overheatMessage;
     public Slider overheatSlider;
+    [Header("Crosshair")]
+    public GameObject crosshair;
     [Header("Death Screen")]
     public GameObject deathScreen;
     public TMP_Text deathText;
@@ -29,6 +33,22 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playerUIContainer.SetActive(true);
+        healthDisplay.SetActive(true);
         overheatMessage.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Toggles the Game UI, On and Off
+    /// </summary>
+    public void ToggleUI()
+    {
+        if (playerUIContainer.activeSelf)
+        {
+            playerUIContainer.SetActive(false);
+        } else
+        {
+            playerUIContainer.SetActive(true);
+        }
     }
 }

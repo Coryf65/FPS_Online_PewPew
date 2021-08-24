@@ -4487,8 +4487,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 828765c8637adbc458e195b0f1b30a2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerUIContainer: {fileID: 1452812786}
   overheatMessage: {fileID: 1805059243}
   overheatSlider: {fileID: 1343288710}
+  crosshair: {fileID: 410194679}
   deathScreen: {fileID: 150592155}
   deathText: {fileID: 1030759251}
   healthDisplay: {fileID: 1973906826}
