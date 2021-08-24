@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     public Camera camera;
     public int maxHealth = 100;
     public Animator animator;
+    public Transform modelWeaponPoint;
+    public Transform weaponHolder;
 
     private float verticalRotation;
     private Vector2 mouseInput;
@@ -54,9 +56,9 @@ public class PlayerController : MonoBehaviour
         UIController.instance.overheatSlider.maxValue = maxHeatValue;
         UIController.instance.healthAmountText.text = currentHealth.ToString();
 
-
+        PositionWeaponOnPlayer();
         SetWeapon();
-    }
+    }    
 
     // Update is called once per frame
     void Update()
@@ -76,14 +78,21 @@ public class PlayerController : MonoBehaviour
         }  
     }
 
+    /// <summary>
+    /// Sets up the players weapon position
+    /// </summary>
+    private void PositionWeaponOnPlayer()
+    {
+        weaponHolder.parent = modelWeaponPoint;
+        weaponHolder.localPosition = Vector3.zero;
+        weaponHolder.localRotation = Quaternion.identity;
+    }
+
     private void HandleMenuActions()
     {
-        if (photonView.AmOwner)
+        if (Input.GetKeyDown(KeyCode.F1))
         {
-            if (Input.GetKeyDown(KeyCode.F1))
-            {
-                UIController.instance.ToggleUI();
-            }
+            UIController.instance.ToggleUI();
         }
     }
 
