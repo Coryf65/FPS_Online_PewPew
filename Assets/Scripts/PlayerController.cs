@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public GameObject playerHitEffect;
     public Camera camera;
     public int maxHealth = 100;
+    public Animator animator;
 
     private float verticalRotation;
     private Vector2 mouseInput;
@@ -66,11 +67,20 @@ public class PlayerController : MonoBehaviour
             {
                 HandlePlayerLookMovement();
                 HandlePlayerMovement();
+                HandlePlayerAnimations();
                 HandleWeaponActions();
                 HandleWeaponSwitch();
             }            
         }  
-    }    
+    }
+
+    private void HandlePlayerAnimations()
+    {
+        animator.SetBool("grounded", isGrounded);
+        // how much distance we are covering, always a positive number
+        Debug.Log($"Movement:  {movement.magnitude}");
+        animator.SetFloat("speed", movement.magnitude); 
+    }
 
     // Happens after Update
     private void LateUpdate()
@@ -101,9 +111,8 @@ public class PlayerController : MonoBehaviour
         }
 
         float velocity = movement.y;
-
         // based on players camera direction, then remove the sideways speed increase
-        movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized * activeMoveSpeed; // added here to prevent jumping sped up
+        movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized * activeMoveSpeed;
         movement.y = velocity;
 
         if (characterController.isGrounded)
@@ -121,9 +130,8 @@ public class PlayerController : MonoBehaviour
             movement.y = jumpForce;
         }
 
-        movement.y += Physics.gravity.y * Time.deltaTime * gravityModifier; // apply gravity
-    
-        characterController.Move(movement * Time.deltaTime);                     
+        movement.y += Physics.gravity.y * Time.deltaTime * gravityModifier; // apply gravity    
+        characterController.Move(movement * Time.deltaTime);
     }
 
     /// <summary>
