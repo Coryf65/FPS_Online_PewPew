@@ -3451,6 +3451,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: 0
+  butt: 
+  allPlayers: []
 --- !u!1 &759983114
 GameObject:
   m_ObjectHideFlags: 0
