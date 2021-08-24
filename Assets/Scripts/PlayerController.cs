@@ -78,7 +78,6 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool("grounded", isGrounded);
         // how much distance we are covering, always a positive number
-        Debug.Log($"Movement:  {movement.magnitude}");
         animator.SetFloat("speed", movement.magnitude); 
     }
 
@@ -110,10 +109,10 @@ public class PlayerController : MonoBehaviour
             activeMoveSpeed = movementSpeed;
         }
 
-        float velocity = movement.y;
+        float yVelocity = movement.y;
         // based on players camera direction, then remove the sideways speed increase
         movement = ((transform.forward * moveDirection.z) + (transform.right * moveDirection.x)).normalized * activeMoveSpeed;
-        movement.y = velocity;
+        movement.y = yVelocity;
 
         if (characterController.isGrounded)
         {
@@ -122,7 +121,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // start, direction, how far, what to hit
-        isGrounded = Physics.Raycast(groundCheckPoint.position, Vector3.down, .25f, groundLayers);
+        isGrounded = Physics.Raycast(groundCheckPoint.position, Vector3.down, .4f, groundLayers);
 
         // jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
