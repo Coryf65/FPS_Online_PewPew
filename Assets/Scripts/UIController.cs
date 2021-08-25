@@ -32,7 +32,9 @@ public class UIController : MonoBehaviour
     public GameObject scoreBoard;
     public TMP_Text killsText;
     public TMP_Text deathsText;
-
+    [Header("Leaderboard")]
+    public GameObject leaderboard;
+    public Leaderboard playerDisplay;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +43,7 @@ public class UIController : MonoBehaviour
         healthDisplay.SetActive(true);
         overheatMessage.gameObject.SetActive(false);
         scoreBoard.SetActive(true);
+        leaderboard.SetActive(false);
     }
 
     /// <summary>
@@ -54,6 +57,19 @@ public class UIController : MonoBehaviour
         } else
         {
             playerUIContainer.SetActive(true);
+        }
+    }
+
+    public void ToggleDisplayLeaderboards()
+    {
+        if (leaderboard.activeInHierarchy)
+        {
+            leaderboard.SetActive(false);
+        }
+        else
+        {
+            leaderboard.SetActive(true);
+            MatchManager.instance.UpdateLeaderboard();
         }
     }
 }

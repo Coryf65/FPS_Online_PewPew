@@ -94,6 +94,11 @@ public class PlayerController : MonoBehaviour
         {
             UIController.instance.ToggleUI();
         }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            UIController.instance.ToggleDisplayLeaderboards();
+        }
     }
 
     private void HandlePlayerAnimations()

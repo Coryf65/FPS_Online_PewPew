@@ -31,6 +31,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public List<PlayerInfo> allPlayers = new List<PlayerInfo>();
 
     private int index;
+    private List<Leaderboard> playersLeaderboard = new List<Leaderboard>();
 
     // Start is called before the first frame update
     void Start()
@@ -222,5 +223,30 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             UIController.instance.killsText.text = $"Kills: 0";
             UIController.instance.deathsText.text = $"Deaths: 0";
         }        
+    }
+
+    public void UpdateLeaderboard()
+    {
+        UIController.instance.leaderboard.SetActive(true);
+
+        foreach (Leaderboard lp in playersLeaderboard)
+        {
+            Destroy(lp);
+        }
+        playersLeaderboard.Clear();
+
+        UIController.instance.playerDisplay.gameObject.SetActive(false);
+
+        // display all players
+        foreach (PlayerInfo playerInfo in allPlayers)
+        {
+            // create new player
+            Leaderboard newPlayerDisplay = Instantiate(UIController.instance.playerDisplay, UIController.instance.playerDisplay.transform.parent);
+
+            newPlayerDisplay.SetDetails(playerInfo.Name, playerInfo.Kills, playerInfo.Deaths);
+            newPlayerDisplay.gameObject.SetActive(true);
+
+            playersLeaderboard.Add(newPlayerDisplay);
+        }
     }
 }
