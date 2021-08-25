@@ -38,3 +38,6 @@ sysinfo.txt
 
 # Game Builds
 _Builds/
+
+# Log Files for Unity
+Logs/
