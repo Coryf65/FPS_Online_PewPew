@@ -284,7 +284,7 @@ public class PlayerController : MonoBehaviour
                 PhotonNetwork.Instantiate(playerHitEffect.name, hit.point, Quaternion.identity);
 
                 // Calls DamagePlayer()
-                hit.collider.gameObject.GetPhotonView().RPC("DamagePlayer", RpcTarget.All, photonView.Owner.NickName, weapons[selectedWeapon].weaponDamage); // sending nickname across the RPC call
+                hit.collider.gameObject.GetPhotonView().RPC("DamagePlayer", RpcTarget.All, photonView.Owner.NickName, weapons[selectedWeapon].weaponDamage, PhotonNetwork.LocalPlayer.ActorNumber); // sending nickname across the RPC call
             } else
             {
                 GameObject bulletImpactObject = Instantiate(bulletImpactEffect, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
@@ -321,9 +321,9 @@ public class PlayerController : MonoBehaviour
     /// <param name="damageDealer"></param>
     /// <param name="damageAmount"></param>
     [PunRPC] // can call this function to run at the same time across network
-    public void DamagePlayer(string damageDealer, int damageAmount)
+    public void DamagePlayer(string damageDealer, int damageAmount, int actorId)
     {
-        Damage(damageDealer, damageAmount);
+        Damage(damageDealer, damageAmount, actorId);
     }
 
     /// <summary>
@@ -331,7 +331,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     /// <param name="damageDealer"></param>
     /// <param name="damageAmount"></param>
-    public void Damage(string damageDealer, int damageAmount)
+    public void Damage(string damageDealer, int damageAmount, int actorId)
     {
         if (photonView.IsMine)
         {
@@ -346,6 +346,7 @@ public class PlayerController : MonoBehaviour
             {
                 currentHealth = 0;
                 PlayerSpawner.instance.Died(damageDealer);
+                MatchManager.instance.UpdateStatsSend(actorId, 0, 1); // increase kill stat
             }
 
             UIController.instance.healthAmountText.text = currentHealth.ToString();

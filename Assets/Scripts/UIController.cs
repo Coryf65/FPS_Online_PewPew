@@ -28,6 +28,10 @@ public class UIController : MonoBehaviour
     public GameObject healthDisplay;
     public Image heartImage;
     public TMP_Text healthAmountText;
+    [Header("Scoreboard K/Ds")]
+    public GameObject scoreBoard;
+    public TMP_Text killsText;
+    public TMP_Text deathsText;
 
 
     // Start is called before the first frame update
@@ -36,6 +40,7 @@ public class UIController : MonoBehaviour
         playerUIContainer.SetActive(true);
         healthDisplay.SetActive(true);
         overheatMessage.gameObject.SetActive(false);
+        scoreBoard.SetActive(true);
     }
 
     /// <summary>

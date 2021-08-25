@@ -44,6 +44,7 @@ public class PlayerSpawner : MonoBehaviour
     public void Died(string damager)
     {       
         UIController.instance.deathText.text = $"You were killed by {damager}";
+        MatchManager.instance.UpdateStatsSend(PhotonNetwork.LocalPlayer.ActorNumber, 1, 1);
 
         // run a timer to wait
         if (player != null)
