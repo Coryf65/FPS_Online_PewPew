@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
 using System;
+using System.Linq;
 
 public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -236,9 +237,10 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         playersLeaderboard.Clear();
 
         UIController.instance.playerDisplay.gameObject.SetActive(false);
+        List<PlayerInfo> sortedPlayers = SortPlayersByKills(allPlayers);
 
         // display all players
-        foreach (PlayerInfo playerInfo in allPlayers)
+        foreach (PlayerInfo playerInfo in sortedPlayers)
         {
             // create new player
             Leaderboard newPlayerDisplay = Instantiate(UIController.instance.playerDisplay, UIController.instance.playerDisplay.transform.parent);
@@ -248,5 +250,19 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
             playersLeaderboard.Add(newPlayerDisplay);
         }
+    }
+
+    /// <summary>
+    /// Sort a List by Kills
+    /// </summary>
+    /// <param name="playerList"></param>
+    /// <returns></returns>
+    private List<PlayerInfo> SortPlayersByKills(List<PlayerInfo> playerList)
+    {
+        List<PlayerInfo> sortedPlayers = new List<PlayerInfo>();
+
+        sortedPlayers = playerList.OrderBy(p => p.Kills).ToList();
+
+        return sortedPlayers;
     }
 }
