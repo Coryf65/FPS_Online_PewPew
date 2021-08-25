@@ -208,6 +208,11 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     UpdateScoreBoard();
                 }
 
+                if (UIController.instance.leaderboard.activeInHierarchy)
+                {
+                    UpdateLeaderboard();
+                }
+
                 break; // we found the player to update we are done
             }
         }
