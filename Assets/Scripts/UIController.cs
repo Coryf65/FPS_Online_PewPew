@@ -35,6 +35,8 @@ public class UIController : MonoBehaviour
     [Header("Leaderboard")]
     public GameObject leaderboard;
     public Leaderboard playerDisplay;
+    [Header("Round Over Screen")]
+    public GameObject roundOverScreen;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +46,7 @@ public class UIController : MonoBehaviour
         overheatMessage.gameObject.SetActive(false);
         scoreBoard.SetActive(true);
         leaderboard.SetActive(false);
+        roundOverScreen.SetActive(false);
     }
 
     /// <summary>
