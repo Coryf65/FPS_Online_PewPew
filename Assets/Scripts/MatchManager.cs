@@ -37,12 +37,11 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [Tooltip("Main Menu Scene index on Build Settings.")]
     public int mainMenu = 0;
     [Header("Game State")]
-    public string butt = "";
+    public GameState currentState = GameState.Waiting;
     public List<PlayerInfo> allPlayers = new List<PlayerInfo>();
     [Header("Move to another Class? or SO")]
     public int killsToWin = 3;
-    public GameObject mapCameraPoint;
-    public GameState currentState = GameState.Waiting;
+    public Transform mapCameraPoint;
     public float waitTimeAfterRound = 5f;
 
     private int index;
@@ -174,6 +173,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 index = i - 1;
             }
         }
+        // each indivdual checks game state, master sends
+        StateCheck();
     }
 
     /// <summary>
@@ -328,5 +329,40 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             ListPlayersSend();
         }
 
+    }
+
+    void StateCheck()
+    {
+        if (currentState == GameState.Ending)
+        {
+            EndRound();
+        }
+    }
+
+    void EndRound()
+    {
+        currentState = GameState.Ending;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // Destroy all Network items
+            PhotonNetwork.DestroyAll();
+        }
+
+        UIController.instance.roundOverScreen.SetActive(true);
+        UIController.instance.ToggleDisplayLeaderboards("true");
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        StartCoroutine(WaitTimer(waitTimeAfterRound));
+    }
+
+    private IEnumerator WaitTimer(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        PhotonNetwork.AutomaticallySyncScene = false;
+        PhotonNetwork.LeaveRoom();
     }
 }

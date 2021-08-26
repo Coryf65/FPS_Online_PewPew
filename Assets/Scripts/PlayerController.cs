@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (photonView.AmOwner)
+        if (photonView.IsMine)
         {
             HandleMouseCursor();
             if (!Cursor.visible)
@@ -111,9 +111,16 @@ public class PlayerController : MonoBehaviour
     // Happens after Update
     private void LateUpdate()
     {
-        if (photonView.AmOwner)
+        if (photonView.IsMine)
         {
             HandleCameraPostion();
+
+            if (MatchManager.instance.currentState == MatchManager.GameState.Ending)
+            {
+                // set to view map
+                camera.transform.position = MatchManager.instance.mapCameraPoint.position;
+                camera.transform.rotation = MatchManager.instance.mapCameraPoint.rotation;
+            }
         }
     }
 

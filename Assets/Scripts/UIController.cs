@@ -63,8 +63,15 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void ToggleDisplayLeaderboards()
+    public void ToggleDisplayLeaderboards(string overrideDisplay = null )
     {
+
+        if (!string.IsNullOrEmpty(overrideDisplay))
+        {
+            leaderboard.SetActive(true);
+            return;
+        }
+
         if (leaderboard.activeInHierarchy)
         {
             leaderboard.SetActive(false);
