@@ -36,6 +36,7 @@ public class PlayerSpawner : MonoBehaviour
         Transform spawnPoint = SpawnManager.instance.GetRandomSpawnPoint();
 
         player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, spawnPoint.rotation);
+        player.name = $"Player_{PhotonNetwork.LocalPlayer.NickName}";
     }
 
     /// <summary>
@@ -57,14 +58,20 @@ public class PlayerSpawner : MonoBehaviour
     {
         // spawn effect
         PhotonNetwork.Instantiate(deathEffect.name, player.transform.position, Quaternion.identity);
+        
         // Destroy the player
         PhotonNetwork.Destroy(player);
+        player = null;
+
         UIController.instance.deathScreen.SetActive(true);
 
         yield return new WaitForSeconds(respawnTime);
 
         UIController.instance.deathScreen.SetActive(false);
 
-        SpawnPlayer();
+        if (MatchManager.instance.currentState == MatchManager.GameState.Playing && player == null)
+        {
+            SpawnPlayer();
+        }
     }
 }

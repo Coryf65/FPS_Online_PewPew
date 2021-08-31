@@ -22,7 +22,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         NewPlayer,
         ListPlayers,
-        ChangeStats
+        ChangeStats,
+        NextRound
     }
 
     public enum GameState
@@ -31,8 +32,6 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Playing,
         Ending
     }
-
-    
 
     [Tooltip("Main Menu Scene index on Build Settings.")]
     public int mainMenu = 0;
@@ -43,6 +42,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public int killsToWin = 3;
     public Transform mapCameraPoint;
     public float waitTimeAfterRound = 5f;
+    public bool redoRound;
 
     private int index;
     private List<Leaderboard> playersLeaderboard = new List<Leaderboard>();
@@ -79,7 +79,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 case EventCodes.ChangeStats:
                     UpdateStatsReceive(data);
                     break;
-                default:
+                case EventCodes.NextRound:
+                    NextRoundReceive();
                     break;
             }
         }
@@ -93,7 +94,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public override void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
-    }
+    }    
 
     // Send a New Player Event, creating the new player
     public void NewPlayerSend(string username)
@@ -240,6 +241,35 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         CheckForRoundWinCondition();
     }
 
+    public void NextRoundSend()
+    {
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.NextRound,
+            null,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true });
+    }
+
+    public void NextRoundReceive()
+    {
+        currentState = GameState.Playing;
+
+        UIController.instance.roundOverScreen.SetActive(false);
+        UIController.instance.ToggleDisplayLeaderboards("false");
+
+        // Reset scores for all players
+        foreach (PlayerInfo player in allPlayers)
+        {
+            player.Kills = 0;
+            player.Deaths = 0;
+        }
+
+        // Update stats to others
+        UpdateLeaderboard();
+
+        PlayerSpawner.instance.SpawnPlayer();
+    }
+
     public void UpdateScoreBoard()
     {
         if (allPlayers.Count > index)
@@ -355,14 +385,34 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        Camera.main.transform.position = mapCameraPoint.position;
+        Camera.main.transform.rotation = mapCameraPoint.rotation;
+
         StartCoroutine(WaitTimer(waitTimeAfterRound));
     }
 
+    /// <summary>
+    /// Wait for a given amount of seconds
+    /// </summary>
+    /// <param name="seconds">Seconds to wait for</param>
+    /// <returns>Nothing</returns>
     private IEnumerator WaitTimer(float seconds)
     {
         yield return new WaitForSeconds(seconds);
 
-        PhotonNetwork.AutomaticallySyncScene = false;
-        PhotonNetwork.LeaveRoom();
+        if (!redoRound)
+        {
+            PhotonNetwork.AutomaticallySyncScene = false;
+            PhotonNetwork.LeaveRoom();
+        } else
+        {
+            // redo round
+            if (PhotonNetwork.IsMasterClient)
+            {
+                NextRoundSend();
+            }
+        }
+
+        
     }
 }

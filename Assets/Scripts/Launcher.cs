@@ -40,7 +40,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public string levelToLoad;
     [Header("TEST Tools")]
     public GameObject testGameBtn;
-
+    public static bool isNicknameSet;
 
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
@@ -48,7 +48,6 @@ public class Launcher : MonoBehaviourPunCallbacks
     private List<RoomButton> allRoomButtons = new List<RoomButton>();
     [SerializeField]
     private List<TMP_Text> playerNamesInRoom = new List<TMP_Text>();
-    private bool isNicknameSet = false;
 
     private void Start()
     {
@@ -63,6 +62,9 @@ public class Launcher : MonoBehaviourPunCallbacks
         // Only runs in editor
         testGameBtn.SetActive(true);
 #endif
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     void CloseMenus()

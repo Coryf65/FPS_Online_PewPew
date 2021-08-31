@@ -4079,6 +4079,7 @@ MonoBehaviour:
   killsToWin: 3
   mapCameraPoint: {fileID: 1080274827}
   waitTimeAfterRound: 5
+  redoRound: 1
 --- !u!1 &759983114
 GameObject:
   m_ObjectHideFlags: 0

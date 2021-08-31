@@ -445,10 +445,9 @@ MonoBehaviour:
   - {fileID: 4269271330625316038}
   - {fileID: 6692534638323554137}
   muzzleDisplayTime: 0.016666668
-  photonView: {fileID: 1823127989441283070}
   playerHitEffect: {fileID: 760752906026400848, guid: 316c931f9c405c04b92caf090f797709,
     type: 3}
-  camera: {fileID: 7694805685168011341}
+  camera: {fileID: 0}
   maxHealth: 100
   animator: {fileID: 3888973507319595669}
   modelWeaponPoint: {fileID: 8400361901404170348}
@@ -615,7 +614,7 @@ GameObject:
   - component: {fileID: 1015345429286803772}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

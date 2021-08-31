@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Realtime;
 using Photon.Pun;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
     public Transform viewPoint;
     public float mouseSensitivity = 1f;
@@ -24,7 +22,6 @@ public class PlayerController : MonoBehaviour
     public float overHeatCooldown = 5f;
     public Weapon[] weapons;
     public float muzzleDisplayTime;
-    public PhotonView photonView;
     public GameObject playerHitEffect;
     public Camera camera;
     public int maxHealth = 100;
@@ -47,9 +44,9 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        photonView = GetComponent<PhotonView>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        camera = Camera.main;
 
         currentHealth = maxHealth;
         UIController.instance.healthDisplay.SetActive(true);
@@ -113,9 +110,10 @@ public class PlayerController : MonoBehaviour
     {
         if (photonView.IsMine)
         {
-            HandleCameraPostion();
-
-            if (MatchManager.instance.currentState == MatchManager.GameState.Ending)
+            if (MatchManager.instance.currentState == MatchManager.GameState.Playing)
+            {
+                HandleCameraPostion();
+            } else
             {
                 // set to view map
                 camera.transform.position = MatchManager.instance.mapCameraPoint.position;
