@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        camera = Camera.main;
+        //camera = Camera.main;
 
         currentHealth = maxHealth;
         UIController.instance.healthDisplay.SetActive(true);
