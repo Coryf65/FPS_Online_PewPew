@@ -23,12 +23,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Weapon[] weapons;
     public float muzzleDisplayTime;
     public GameObject playerHitEffect;
-    public Camera camera;
     public int maxHealth = 100;
     public Animator animator;
     public Transform modelWeaponPoint;
     public Transform weaponHolder;
 
+    private Camera camera;
     private float verticalRotation;
     private Vector2 mouseInput;
     private Vector3 moveDirection;
@@ -46,7 +46,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        //camera = Camera.main;
+
+        Debug.LogWarning($"before Cam : {camera.name}");
+        camera = photonView.GetComponent<Camera>();
+        Debug.LogWarning($"after Cam : {camera.name}");
 
         currentHealth = maxHealth;
         UIController.instance.healthDisplay.SetActive(true);
@@ -59,7 +62,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     // Update is called once per frame
     void Update()
-    {
+    {       
         if (photonView.IsMine)
         {
             HandleMouseCursor();
@@ -73,6 +76,23 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 HandleMenuActions();
             }            
         }  
+    }
+
+    // Happens after Update
+    private void LateUpdate()
+    {
+        //if (photonView.IsMine)
+        //{
+            if (MatchManager.instance.currentState == MatchManager.GameState.Playing)
+            {
+                HandleCameraPostion();
+            } else
+            {
+                // set to view map
+                camera.transform.position = MatchManager.instance.mapCameraPoint.position;
+                camera.transform.rotation = MatchManager.instance.mapCameraPoint.rotation;
+            }
+        //}
     }
 
     /// <summary>
@@ -103,24 +123,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         animator.SetBool("grounded", isGrounded);
         // how much distance we are covering, always a positive number
         animator.SetFloat("speed", movement.magnitude); 
-    }
-
-    // Happens after Update
-    private void LateUpdate()
-    {
-        if (photonView.IsMine)
-        {
-            if (MatchManager.instance.currentState == MatchManager.GameState.Playing)
-            {
-                HandleCameraPostion();
-            } else
-            {
-                // set to view map
-                camera.transform.position = MatchManager.instance.mapCameraPoint.position;
-                camera.transform.rotation = MatchManager.instance.mapCameraPoint.rotation;
-            }
-        }
-    }
+    }    
 
     private void HandleCameraPostion()
     {
@@ -307,7 +310,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // Overheating
         shotCounter = weapons[selectedWeapon].timeBetweenShots;
 
-        heatCounter = weapons[selectedWeapon].heatPerShot;
+        heatCounter += weapons[selectedWeapon].heatPerShot;
 
         if (heatCounter >= maxHeatValue)
         {
@@ -323,6 +326,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         weapons[selectedWeapon].muzzleFlash.SetActive(true);
 
         muzzleCounter = muzzleDisplayTime;
+
+        //allGuns[selectedGun].shotSound.Stop();
+        //allGuns[selectedGun].shotSound.Play();
     }
 
     /// <summary>
