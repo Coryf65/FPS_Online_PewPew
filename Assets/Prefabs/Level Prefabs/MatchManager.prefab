@@ -50,3 +50,4 @@ MonoBehaviour:
   mapCameraPoint: {fileID: 0}
   waitTimeAfterRound: 5
   redoRound: 1
+  roundLength: 15

@@ -17,8 +17,13 @@ public class UIController : MonoBehaviour
     [Header("Player UI")]
     [Space]
     public GameObject playerUIContainer;
+    [Header("Overheating Weapon")]
+    public GameObject overheatContainer;
     public TMP_Text overheatMessage;
     public Slider overheatSlider;
+    [Header("Match Timer")]
+    public GameObject timerContainer;
+    public TMP_Text roundCountdownText;
     [Header("Crosshair")]
     public GameObject crosshair;
     [Header("Death Screen")]
@@ -41,6 +46,7 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        TogglePlayerUI(true);
         playerUIContainer.SetActive(true);
         healthDisplay.SetActive(true);
         overheatMessage.gameObject.SetActive(false);
@@ -63,7 +69,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void ToggleDisplayLeaderboards(string overrideDisplay = null )
+    public void ToggleDisplayLeaderboards(string overrideDisplay = null)
     {
 
         if (!string.IsNullOrEmpty(overrideDisplay))
@@ -79,7 +85,17 @@ public class UIController : MonoBehaviour
         else
         {
             leaderboard.SetActive(true);
+            //MatchManager.instance.UpdateLeaderboard();
             MatchManager.instance.UpdateLeaderboard();
         }
+    }
+
+    public void TogglePlayerUI(bool toggle)
+    {
+        overheatContainer.SetActive(toggle);
+        crosshair.SetActive(toggle);
+        timerContainer.SetActive(toggle);
+        healthDisplay.SetActive(toggle);
+        scoreBoard.SetActive(toggle);
     }
 }

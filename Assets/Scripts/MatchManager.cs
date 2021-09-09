@@ -43,7 +43,9 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public Transform mapCameraPoint;
     public float waitTimeAfterRound = 5f;
     public bool redoRound;
+    public float roundLength = 180f;
 
+    private float currentRoundTimer;
     private int index;
     private List<Leaderboard> playersLeaderboard = new List<Leaderboard>();
 
@@ -57,6 +59,33 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             NewPlayerSend(PhotonNetwork.NickName);
             currentState = GameState.Playing;
+            UIController.instance.TogglePlayerUI(true);
+            SetupTimer();
+            
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                UIController.instance.roundCountdownText.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    void Update()
+    {
+        if (currentRoundTimer > 0 && currentState == GameState.Playing)
+        {
+            currentRoundTimer -= Time.deltaTime;
+
+            if (currentRoundTimer <= 0)
+            {
+                currentRoundTimer = 0;
+                currentState = GameState.Ending;
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    ListPlayersSend();
+                    StateCheck();
+                }
+            }
+            UpdateRoundTimerDisplay();
         }
     }
 
@@ -381,12 +410,14 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         UIController.instance.roundOverScreen.SetActive(true);
         UIController.instance.ToggleDisplayLeaderboards("true");
-
+        //UIController.instance.timerContainer.SetActive(false);
+        UIController.instance.TogglePlayerUI(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        Camera.main.transform.position = mapCameraPoint.position;
-        Camera.main.transform.rotation = mapCameraPoint.rotation;
+        // TODO: Cory try to switch to map camera
+        //Camera.main.transform.position = mapCameraPoint.position;
+        //Camera.main.transform.rotation = mapCameraPoint.rotation;
 
         StartCoroutine(WaitTimer(waitTimeAfterRound));
     }
@@ -427,8 +458,23 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     }
                 }
             }
-        }
+        }        
+    }
 
-        
+    public void SetupTimer()
+    {
+        if (roundLength > 0)
+        {
+            UIController.instance.timerContainer.SetActive(true);            
+            currentRoundTimer = roundLength;
+            UpdateRoundTimerDisplay();
+        }
+    }
+
+    public void UpdateRoundTimerDisplay()
+    {
+        TimeSpan timeDisplay = System.TimeSpan.FromSeconds(currentRoundTimer);
+
+        UIController.instance.roundCountdownText.text = timeDisplay.ToString("mm\\:ss");
     }
 }

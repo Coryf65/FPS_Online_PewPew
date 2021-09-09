@@ -48,7 +48,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Cursor.visible = false;
 
         camera = GetComponentInChildren<Camera>();
-        //Debug.LogWarning($"Got Cam : {camera.name}");
 
         currentHealth = maxHealth;
         UIController.instance.healthDisplay.SetActive(true);
