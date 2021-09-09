@@ -58,7 +58,11 @@ public class Launcher : MonoBehaviourPunCallbacks
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting to Server";
 
-        PhotonNetwork.ConnectUsingSettings();
+        // prevent connecting twice
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
 
 #if UNITY_EDITOR
         // Only runs in editor
