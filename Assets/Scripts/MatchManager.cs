@@ -409,7 +409,23 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             // redo round
             if (PhotonNetwork.IsMasterClient)
             {
-                NextRoundSend();
+                // stay on map
+                if (!Launcher.instance.changeMapBetweenRounds)
+                {
+                    NextRoundSend();
+                } else
+                {
+                    int newLevel = UnityEngine.Random.Range(0, Launcher.instance.allMaps.Length);
+
+                    if (Launcher.instance.allMaps[newLevel] == SceneManager.GetActiveScene().name)
+                    {
+                        // load same map
+                        NextRoundSend();
+                    } else
+                    {
+                        PhotonNetwork.LoadLevel(Launcher.instance.allMaps[newLevel]);
+                    }
+                }
             }
         }
 
