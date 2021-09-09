@@ -23,7 +23,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         NewPlayer,
         ListPlayers,
         ChangeStats,
-        NextRound
+        NextRound,
+        TimerSync
     }
 
     public enum GameState
@@ -46,6 +47,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public float roundLength = 180f;
 
     private float currentRoundTimer;
+    private float sendTimer;
     private int index;
     private List<Leaderboard> playersLeaderboard = new List<Leaderboard>();
 
@@ -71,22 +73,31 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void Update()
     {
-        if (currentRoundTimer > 0 && currentState == GameState.Playing)
+        if (PhotonNetwork.IsMasterClient)
         {
-            currentRoundTimer -= Time.deltaTime;
-
-            if (currentRoundTimer <= 0)
+            if (currentRoundTimer > 0 && currentState == GameState.Playing)
             {
-                currentRoundTimer = 0;
-                currentState = GameState.Ending;
-                if (PhotonNetwork.IsMasterClient)
+                currentRoundTimer -= Time.deltaTime;
+
+                if (currentRoundTimer <= 0)
                 {
+                    currentRoundTimer = 0;
+                    currentState = GameState.Ending;
+
                     ListPlayersSend();
                     StateCheck();
                 }
+
+                UpdateRoundTimerDisplay();
+                sendTimer -= Time.deltaTime;
+
+                if (sendTimer <= 0)
+                {
+                    sendTimer += 1f;
+                    TimerSend();
+                }                
             }
-            UpdateRoundTimerDisplay();
-        }
+        }        
     }
 
     public void OnEvent(EventData photonEvent)
@@ -110,6 +121,9 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     break;
                 case EventCodes.NextRound:
                     NextRoundReceive();
+                    break;
+                case EventCodes.TimerSync:
+                    TimerReceive(data);
                     break;
             }
         }
@@ -476,5 +490,25 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         TimeSpan timeDisplay = System.TimeSpan.FromSeconds(currentRoundTimer);
 
         UIController.instance.roundCountdownText.text = timeDisplay.ToString("mm\\:ss");
+    }
+
+    // Sending time out to all players
+    void TimerSend()
+    {
+        object[] package = new object[] { (int)currentRoundTimer, currentState };
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.NextRound,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true });
+    }
+
+    void TimerReceive(object[] dataReceived)
+    {
+        currentRoundTimer = (int)dataReceived[0];
+        currentState = (GameState)dataReceived[1];
+
+        UpdateRoundTimerDisplay();
     }
 }
