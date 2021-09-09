@@ -179,7 +179,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         else if (Cursor.lockState == CursorLockMode.None)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !UIController.instance.optionsScreen.activeInHierarchy)
             {
                 // player clicked on the window
                 Cursor.lockState = CursorLockMode.Locked;

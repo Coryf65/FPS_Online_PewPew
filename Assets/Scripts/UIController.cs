@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using Photon.Pun;
 
 public class UIController : MonoBehaviour
 {
@@ -42,6 +43,10 @@ public class UIController : MonoBehaviour
     public Leaderboard playerDisplay;
     [Header("Round Over Screen")]
     public GameObject roundOverScreen;
+    [Header("Options Screen")]
+    public GameObject optionsScreen;
+    public Button quitBtn;
+    public Button resumeBtn;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +58,21 @@ public class UIController : MonoBehaviour
         scoreBoard.SetActive(true);
         leaderboard.SetActive(false);
         roundOverScreen.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ShowHideOptions();
+
+        }
+
+        if (optionsScreen.activeInHierarchy)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     /// <summary>
@@ -97,5 +117,25 @@ public class UIController : MonoBehaviour
         timerContainer.SetActive(toggle);
         healthDisplay.SetActive(toggle);
         scoreBoard.SetActive(toggle);
+    }
+
+    public void ShowHideOptions()
+    {        
+        if (!optionsScreen.activeInHierarchy)
+        {
+            optionsScreen.SetActive(true);
+            TogglePlayerUI(false);
+        } else
+        {
+            optionsScreen.SetActive(false);
+            TogglePlayerUI(true);
+        }
+    }
+
+    // Return to Main Menu
+    public void QuitGame()
+    {
+        PhotonNetwork.AutomaticallySyncScene = false;
+        PhotonNetwork.LeaveRoom();
     }
 }
