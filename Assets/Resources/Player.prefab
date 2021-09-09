@@ -534,6 +534,16 @@ MonoBehaviour:
   animator: {fileID: 3888973507319595669}
   modelWeaponPoint: {fileID: 8400361901404170348}
   weaponHolder: {fileID: 4484200494350676145}
+  playerModel: {fileID: 3888973507372512398}
+  allSkins:
+  - {fileID: 2100000, guid: 77c6cb66aedd8614a9d77ea6c7c4df49, type: 2}
+  - {fileID: 2100000, guid: 41928b1c3f87fb74ab84785adb8b26b4, type: 2}
+  - {fileID: 2100000, guid: ff33376319e587e4c91204ac427de275, type: 2}
+  - {fileID: 2100000, guid: 74127230361817246951e01ab25b3bc5, type: 2}
+  - {fileID: 2100000, guid: 7222213491895fe43ad8d5232c3b4b53, type: 2}
+  - {fileID: 2100000, guid: 3212f94e07d1deb45aa6a9a29053538a, type: 2}
+  - {fileID: 2100000, guid: 4baa1a7cf7fd5e54895a5459a1d0a433, type: 2}
+  - {fileID: 2100000, guid: 3cc029f6eccfe434ba9eb087e3e1d33b, type: 2}
 --- !u!114 &6822037761366842837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1619,6 +1629,12 @@ Animator:
 --- !u!1 &3888973507372512568 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1046021142964597237, guid: 38074321d88bbe3438955d413494dac3,
+    type: 3}
+  m_PrefabInstance: {fileID: 4286404725217428685}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3888973507372512398 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1046021142964596803, guid: 38074321d88bbe3438955d413494dac3,
     type: 3}
   m_PrefabInstance: {fileID: 4286404725217428685}
   m_PrefabAsset: {fileID: 0}

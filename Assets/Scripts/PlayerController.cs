@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Animator animator;
     public Transform modelWeaponPoint;
     public Transform weaponHolder;
+    public GameObject playerModel;
 
     private Camera camera;
     private float verticalRotation;
