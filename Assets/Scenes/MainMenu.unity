@@ -3483,6 +3483,10 @@ MonoBehaviour:
   playerNameInput: {fileID: 2002369198}
   levelToLoad: Level_01
   testGameBtn: {fileID: 2024198364}
+  allMaps:
+  - Level_01
+  - Level_02
+  changeMapBetweenRounds: 1
   allRoomButtons: []
   playerNamesInRoom: []
 --- !u!1 &1211825402

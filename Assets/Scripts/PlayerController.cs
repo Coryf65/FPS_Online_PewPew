@@ -47,9 +47,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.LogWarning($"before Cam : {camera.name}");
-        camera = photonView.GetComponent<Camera>();
-        Debug.LogWarning($"after Cam : {camera.name}");
+        camera = GetComponentInChildren<Camera>();
+        //Debug.LogWarning($"Got Cam : {camera.name}");
 
         currentHealth = maxHealth;
         UIController.instance.healthDisplay.SetActive(true);

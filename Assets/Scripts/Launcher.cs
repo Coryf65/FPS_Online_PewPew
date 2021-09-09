@@ -41,6 +41,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     [Header("TEST Tools")]
     public GameObject testGameBtn;
     public static bool isNicknameSet;
+    public string[] allMaps;
+    public bool changeMapBetweenRounds = true;
 
     [SerializeField]
     private const int MAX_PLAYERS_PER_ROOM = 8;
@@ -295,7 +297,10 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void StartGame()
     {
-        PhotonNetwork.LoadLevel(levelToLoad);
+        //PhotonNetwork.LoadLevel(levelToLoad);
+
+        // Choose a random map
+        PhotonNetwork.LoadLevel(allMaps[Random.Range(0, allMaps.Length)]);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
