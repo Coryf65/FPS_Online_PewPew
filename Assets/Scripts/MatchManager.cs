@@ -498,7 +498,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         object[] package = new object[] { (int)currentRoundTimer, currentState };
 
         PhotonNetwork.RaiseEvent(
-            (byte)EventCodes.NextRound,
+            (byte)EventCodes.TimerSync,
             package,
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             new SendOptions { Reliability = true });
