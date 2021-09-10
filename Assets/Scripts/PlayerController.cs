@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -28,6 +29,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Transform modelWeaponPoint;
     public Transform weaponHolder;
     public GameObject playerModel;
+    public float adsSpeed;
+    public Transform adsOutPoint;
+    public Transform adsInPoint;
 
     private Camera camera;
     private float verticalRotation;
@@ -48,7 +52,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        camera = GetComponentInChildren<Camera>();
+        CreateCamera();
 
         currentHealth = maxHealth;
         UIController.instance.healthDisplay.SetActive(true);
@@ -60,7 +64,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // set players skin
         playerModel.GetComponent<Renderer>().material = SkinSelector.instance.allSkins[SkinSelector.instance.SkinIndex];
-    }    
+    }
+
+    private void CreateCamera()
+    {
+        //camera = photonView.gameObject.AddComponent<Camera>();
+        //Instantiate(camera, photonView.transform.position, photonView.transform.rotation);
+        camera = GetComponentInChildren<Camera>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -243,6 +254,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         // setting overheat ui
         UIController.instance.overheatSlider.value = heatCounter;
+
+        // ADS
+        if (Input.GetMouseButtonDown(1))
+        {
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, weapons[selectedWeapon].adsZoom, adsSpeed * Time.deltaTime);
+            weaponHolder.position = Vector3.Lerp(weaponHolder.position, adsInPoint.position, adsSpeed * Time.deltaTime);
+        } else
+        {
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, 60f, adsSpeed * Time.deltaTime);
+            weaponHolder.position = Vector3.Lerp(weaponHolder.position, adsOutPoint.position, adsSpeed * Time.deltaTime);
+        }
     }
 
     /// <summary>

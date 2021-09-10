@@ -44,7 +44,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public Transform mapCameraPoint;
     public float waitTimeAfterRound = 5f;
     public bool redoRound;
-    public float roundLength = 180f;
+    public float roundLength = 300f;
 
     private float currentRoundTimer;
     private float sendTimer;

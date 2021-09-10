@@ -515,6 +515,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -1853094968961178454, guid: 0b91dd02b4dad5e4e9c023c58f82d6a6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -1688617927700330159, guid: 0b91dd02b4dad5e4e9c023c58f82d6a6,
         type: 3}
       propertyPath: m_Layer
@@ -2507,7 +2512,6 @@ GameObject:
   m_Component:
   - component: {fileID: 692102701}
   - component: {fileID: 692102700}
-  - component: {fileID: 692102699}
   m_Layer: 0
   m_Name: Overhead Camera
   m_TagString: Untagged
@@ -2515,14 +2519,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!81 &692102699
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692102698}
-  m_Enabled: 0
 --- !u!20 &692102700
 Camera:
   m_ObjectHideFlags: 0
@@ -2530,7 +2526,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692102698}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -2620,7 +2616,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1541683482}
   - component: {fileID: 1541683481}
-  - component: {fileID: 1541683480}
   m_Layer: 0
   m_Name: Map Camera
   m_TagString: Untagged
@@ -2628,14 +2623,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1541683480
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1541683479}
-  m_Enabled: 1
 --- !u!20 &1541683481
 Camera:
   m_ObjectHideFlags: 0

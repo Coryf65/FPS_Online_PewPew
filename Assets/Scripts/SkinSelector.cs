@@ -32,7 +32,6 @@ public class SkinSelector : MonoBehaviour
     {
 
         SkinIndex++;
-        Debug.Log($"NextSkin, index {SkinIndex}");
 
         if (SkinIndex > allSkins.Length - 1)
         {
@@ -45,7 +44,6 @@ public class SkinSelector : MonoBehaviour
     public void PreviousSkin()
     {
         SkinIndex--;
-        Debug.Log($"PrevSkin, index {SkinIndex}");
 
         if (SkinIndex < 0)
         {
@@ -57,7 +55,6 @@ public class SkinSelector : MonoBehaviour
 
     void SetSkin(int index)
     {
-        Debug.Log($"Setting : {SkinIndex}");
         playerModel.GetComponent<Renderer>().material = allSkins[index];
     }
 }
