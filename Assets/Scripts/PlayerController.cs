@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public float adsSpeed;
     public Transform adsOutPoint;
     public Transform adsInPoint;
+    public AudioSource footstepSlow;
+    public AudioSource footstepFast;
 
     private Camera camera;
     private float verticalRotation;
@@ -152,9 +154,26 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (Input.GetKey(KeyCode.LeftShift))
         {
             activeMoveSpeed = runSpeed;
+            if (!footstepFast.isPlaying && moveDirection != Vector3.zero)
+            {
+                footstepFast.Play();
+                footstepSlow.Stop();
+            }
         } else
         {
             activeMoveSpeed = movementSpeed;
+            if (!footstepSlow.isPlaying && moveDirection != Vector3.zero)
+            {
+                footstepSlow.Play();
+                footstepFast.Stop();
+            }
+        }
+
+        // Off the ground or not moving
+        if (moveDirection == Vector3.zero || !isGrounded)
+        {
+            footstepFast.Stop();
+            footstepSlow.Stop();
         }
 
         float yVelocity = movement.y;
@@ -351,8 +370,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         muzzleCounter = muzzleDisplayTime;
 
-        //allGuns[selectedGun].shotSound.Stop();
-        //allGuns[selectedGun].shotSound.Play();
+        weapons[selectedWeapon].shotSound.Stop();
+        weapons[selectedWeapon].shotSound.Play();
     }
 
     /// <summary>

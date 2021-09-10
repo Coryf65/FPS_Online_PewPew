@@ -11,4 +11,5 @@ public class Weapon : MonoBehaviour
     public GameObject muzzleFlash;
     public int weaponDamage;
     public float adsZoom;
+    public AudioSource shotSound;
 }
