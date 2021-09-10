@@ -57,6 +57,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         PositionWeaponOnPlayer();
         photonView.RPC("SetWeapon", RpcTarget.All, selectedWeapon);
+
+        // set players skin
+        playerModel.GetComponent<Renderer>().material = SkinSelector.instance.allSkins[SkinSelector.instance.SkinIndex];
     }    
 
     // Update is called once per frame

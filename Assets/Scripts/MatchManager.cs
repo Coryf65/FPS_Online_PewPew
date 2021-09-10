@@ -309,8 +309,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         // Update stats to others
         UpdateLeaderboard();
-
         PlayerSpawner.instance.SpawnPlayer();
+        SetupTimer();
     }
 
     public void UpdateScoreBoard()

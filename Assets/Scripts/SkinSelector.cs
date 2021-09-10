@@ -5,50 +5,59 @@ using UnityEngine.UI;
 
 public class SkinSelector : MonoBehaviour
 {
+    public static SkinSelector instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     public Renderer skinImage;
     public Material[] allSkins;
     public GameObject playerModel;
     public Button nextSkinBtn;
     public Button previousSkinBtn;
 
-    private int skinIndex = 0;
+    //private int skinIndex = 0;
+    public int SkinIndex { get; private set; }
 
     void Start()
     {
+        SkinIndex = 0;
         // Set starting Skin selection
-        skinImage.material = allSkins[skinIndex];
+        skinImage.material = allSkins[SkinIndex];
     }
 
     public void NextSkin()
     {
 
-        skinIndex++;
-        Debug.Log($"NextSkin, index {skinIndex}");
+        SkinIndex++;
+        Debug.Log($"NextSkin, index {SkinIndex}");
 
-        if (skinIndex > allSkins.Length - 1)
+        if (SkinIndex > allSkins.Length - 1)
         {
-            skinIndex = 0;
+            SkinIndex = 0;
         }
 
-        SetSkin(skinIndex);
+        SetSkin(SkinIndex);
     }
 
     public void PreviousSkin()
     {
-        skinIndex--;
-        Debug.Log($"PrevSkin, index {skinIndex}");
+        SkinIndex--;
+        Debug.Log($"PrevSkin, index {SkinIndex}");
 
-        if (skinIndex < 0)
+        if (SkinIndex < 0)
         {
-            skinIndex = allSkins.Length - 1;
+            SkinIndex = allSkins.Length - 1;
         }
 
-        SetSkin(skinIndex);
+        SetSkin(SkinIndex);
     }
 
     void SetSkin(int index)
     {
-        Debug.Log($"Setting : {skinIndex}");
+        Debug.Log($"Setting : {SkinIndex}");
         playerModel.GetComponent<Renderer>().material = allSkins[index];
     }
 }
